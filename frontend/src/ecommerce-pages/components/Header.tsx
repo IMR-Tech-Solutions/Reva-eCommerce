@@ -1,4 +1,7 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router";
+import { CATEGORIES } from "../data/categories";
+
 import {
   Menu, X, ShoppingCart, User, Search,
   MapPin, Phone, ChevronDown, Globe, ChevronRight,
@@ -29,6 +32,8 @@ export default function Header() {
     document.body.style.overflow = menuOpen ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
   }, [menuOpen]);
+  const navigate = useNavigate();
+const [categoryOpen, setCategoryOpen] = useState(false);
 
   return (
     <>
@@ -94,12 +99,54 @@ export default function Header() {
         <div className="hidden md:block bg-[#FFB700] px-4">
           <div className="max-w-7xl mx-auto flex items-center justify-between py-2">
 
-            {/* Shop by Category */}
-            <button className="flex items-center gap-2 bg-[#1C1C1E] text-white text-sm font-bold px-4 py-2.5 rounded hover:bg-[#2C2C2E] transition-colors flex-shrink-0">
-              <Menu size={15} />
-              <span>Shop by Category</span>
-              <ChevronDown size={13} className="opacity-70" />
-            </button>
+           <div className="relative">
+ <button
+  onClick={() => setCategoryOpen(!categoryOpen)}
+  className={`flex items-center gap-2.5 text-sm font-black uppercase tracking-wide px-5 py-2.5 rounded transition-all duration-200
+    ${categoryOpen
+      ? "bg-[#FFB700] text-[#1C1C1E]"
+      : "bg-[#1C1C1E] text-white hover:bg-[#FFB700] hover:text-[#1C1C1E]"
+    }`}
+>
+  {/* Animated Hamburger → X */}
+  <div className="flex flex-col gap-[4px] w-4 flex-shrink-0">
+    <span className={`block h-[2px] bg-current rounded-full transition-all duration-200
+      ${categoryOpen ? "rotate-45 translate-y-[6px]" : ""}`}
+    />
+    <span className={`block h-[2px] bg-current rounded-full transition-all duration-200
+      ${categoryOpen ? "opacity-0 scale-x-0" : ""}`}
+    />
+    <span className={`block h-[2px] bg-current rounded-full transition-all duration-200
+      ${categoryOpen ? "-rotate-45 -translate-y-[6px]" : ""}`}
+    />
+  </div>
+
+  <span>Shop by Category</span>
+
+  <ChevronDown
+    size={14}
+    className={`ml-auto transition-transform duration-200 ${categoryOpen ? "rotate-180" : ""}`}
+  />
+</button>
+
+
+  {categoryOpen && (
+    <div className="absolute top-full left-0 bg-white shadow-lg rounded mt-2 w-56 z-50">
+      {CATEGORIES.map((cat) => (
+        <button
+          key={cat.slug}
+          onClick={() => {
+            navigate(`/category/${cat.slug}`);
+            setCategoryOpen(false);
+          }}
+          className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+        >
+          {cat.name}
+        </button>
+      ))}
+    </div>
+  )}
+</div>
 
             {/* Nav Links */}
             <nav className="flex items-center gap-0.5">

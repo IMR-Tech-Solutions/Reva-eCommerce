@@ -1,0 +1,260 @@
+// frontend/src/ecommerce-pages/data/products.ts
+export interface Product {
+  id: number;
+  name: string;
+  category: string;
+  material: string;
+  capacity?: string;
+  pressure?: string;
+  flowRate?: string;
+  motorHP?: string;
+  price: number;
+  image: string;
+}
+
+export const products: Product[] = [
+  // 🏭 1️⃣ REACTORS (4 products)
+  {
+    id: 1,
+    name: "SS Batch Reactor 1000L",
+    category: "reactors",
+    material: "SS316",
+    capacity: "1000L",
+    pressure: "High Pressure",
+    price: 1250000,
+    image: "/products/reactor-ss-batch-1000l.jpg",
+  },
+  {
+    id: 2,
+    name: "MS Continuous Reactor 500L",
+    category: "reactors",
+    material: "MS",
+    capacity: "500L",
+    pressure: "Medium Pressure",
+    price: 850000,
+    image: "/products/reactor-ms-continuous-500l.jpg",
+  },
+  {
+    id: 3,
+    name: "GMP Pharma Reactor 200L",
+    category: "reactors",
+    material: "SS304",
+    capacity: "200L",
+    pressure: "High Pressure",
+    price: 950000,
+    image: "/products/reactor-gmp-pharma-200l.jpg",
+  },
+  {
+    id: 4,
+    name: "Glass Lined Jacketed Reactor 300L",
+    category: "reactors",
+    material: "Glass Lined",
+    capacity: "300L",
+    pressure: "Low Pressure",
+    price: 1450000,
+    image: "/products/reactor-glass-lined-300l.jpg",
+  },
+
+  // 🔥 2️⃣ HEAT TRANSFER EQUIPMENT (4 products)
+  {
+    id: 5,
+    name: "Shell & Tube Heat Exchanger 10m²",
+    category: "heat-transfer-equipment",
+    material: "SS316",
+    capacity: "10m² Area",
+    pressure: "Medium Pressure",
+    price: 325000,
+    image: "/products/heat-exchanger-shell-tube-10m2.jpg",
+  },
+  {
+    id: 6,
+    name: "Plate Heat Exchanger 5m²",
+    category: "heat-transfer-equipment",
+    material: "SS304",
+    capacity: "5m² Area",
+    pressure: "Low Pressure",
+    price: 185000,
+    image: "/products/heat-exchanger-plate-5m2.jpg",
+  },
+  {
+    id: 7,
+    name: "Steam Boiler 2TPH",
+    category: "heat-transfer-equipment",
+    material: "MS",
+    capacity: "2TPH",
+    pressure: "High Pressure",
+    price: 750000,
+    image: "/products/steam-boiler-2tph.jpg",
+  },
+  {
+    id: 8,
+    name: "Air Cooled Condenser 50TR",
+    category: "heat-transfer-equipment",
+    material: "SS304",
+    capacity: "50TR",
+    pressure: "Low Pressure",
+    price: 425000,
+    image: "/products/condenser-air-cooled-50tr.jpg",
+  },
+
+  // 🔬 3️⃣ SEPARATION EQUIPMENT (4 products)
+  {
+    id: 9,
+    name: "Distillation Column 500L",
+    category: "separation-equipment",
+    material: "SS316",
+    capacity: "500L",
+    price: 875000,
+    image: "/products/distillation-column-500l.jpg",
+  },
+  {
+    id: 10,
+    name: "Decanter Centrifuge 2m³/hr",
+    category: "separation-equipment",
+    material: "SS304",
+    flowRate: "2m³/hr",
+    motorHP: "15HP",
+    price: 1250000,
+    image: "/products/centrifuge-decanter-2m3.jpg",
+  },
+  {
+    id: 11,
+    name: "Filter Press 500mm Plates",
+    category: "separation-equipment",
+    material: "PP Plates",
+    capacity: "500mm Plates",
+    price: 285000,
+    image: "/products/filter-press-500mm.jpg",
+  },
+  {
+    id: 12,
+    name: "Bag Filter Housing 1000LPM",
+    category: "separation-equipment",
+    material: "SS316",
+    flowRate: "1000LPM",
+    price: 125000,
+    image: "/products/bag-filter-1000lpm.jpg",
+  },
+
+  // 💧 4️⃣ FLUID HANDLING EQUIPMENT (4 products)
+  {
+    id: 13,
+    name: "Centrifugal Pump 50m³/hr",
+    category: "fluid-handling-equipment",
+    material: "CI Lined SS",
+    flowRate: "50m³/hr",
+    motorHP: "10HP",
+    price: 125000,
+    image: "/products/pump-centrifugal-50m3.jpg",
+  },
+  {
+    id: 14,
+    name: "Diaphragm Pump 20m³/hr",
+    category: "fluid-handling-equipment",
+    material: "PP / SS",
+    flowRate: "20m³/hr",
+    motorHP: "7.5HP",
+    price: 185000,
+    image: "/products/pump-diaphragm-20m3.jpg",
+  },
+  {
+    id: 15,
+    name: "Reciprocating Compressor 5HP",
+    category: "fluid-handling-equipment",
+    material: "CI",
+    motorHP: "5HP",
+    pressure: "8 Bar",
+    price: 245000,
+    image: "/products/compressor-reciprocating-5hp.jpg",
+  },
+  {
+    id: 16,
+    name: "Butterfly Valve 6 inch",
+    category: "fluid-handling-equipment",
+    material: "SS304",
+    price: 8500,
+    image: "/products/valve-butterfly-6inch.jpg",
+  },
+
+  // 🪨 5️⃣ SIZE REDUCTION EQUIPMENT (4 products)
+  {
+    id: 17,
+    name: "Jaw Crusher 16x10 inch",
+    category: "size-reduction-equipment",
+    material: "MS",
+    motorHP: "25HP",
+    price: 525000,
+    image: "/products/crusher-jaw-16x10.jpg",
+  },
+  {
+    id: 18,
+    name: "Hammer Mill 50HP",
+    category: "size-reduction-equipment",
+    material: "MS",
+    motorHP: "50HP",
+    price: 425000,
+    image: "/products/hammer-mill-50hp.jpg",
+  },
+  {
+    id: 19,
+    name: "Ball Mill 1000kg/hr",
+    category: "size-reduction-equipment",
+    material: "MS Lined",
+    capacity: "1000kg/hr",
+    motorHP: "30HP",
+    price: 785000,
+    image: "/products/ball-mill-1000kg.jpg",
+  },
+  {
+    id: 20,
+    name: "Impact Pulverizer 500kg/hr",
+    category: "size-reduction-equipment",
+    material: "MS",
+    capacity: "500kg/hr",
+    motorHP: "20HP",
+    price: 325000,
+    image: "/products/pulverizer-impact-500kg.jpg",
+  },
+
+  // 🥣 6️⃣ MIXING EQUIPMENT (4 products)
+  {
+    id: 21,
+    name: "Agitator Mixing Tank 2000L",
+    category: "mixing-equipment",
+    material: "SS316",
+    capacity: "2000L",
+    motorHP: "5HP",
+    price: 425000,
+    image: "/products/mixer-agitator-tank-2000l.jpg",
+  },
+  {
+    id: 22,
+    name: "Ribbon Blender 1000kg",
+    category: "mixing-equipment",
+    material: "SS304/MS",
+    capacity: "1000kg",
+    motorHP: "15HP",
+    price: 285000,
+    image: "/products/ribbon-blender-1000kg.jpg",
+  },
+  {
+    id: 23,
+    name: "Double Cone Blender 500kg",
+    category: "mixing-equipment",
+    material: "SS304",
+    capacity: "500kg",
+    motorHP: "7.5HP",
+    price: 375000,
+    image: "/products/double-cone-blender-500kg.jpg",
+  },
+  {
+    id: 24,
+    name: "High Shear Mixer 100L",
+    category: "mixing-equipment",
+    material: "SS316",
+    capacity: "100L",
+    motorHP: "10HP",
+    price: 625000,
+    image: "/products/high-shear-mixer-100l.jpg",
+  },
+];
