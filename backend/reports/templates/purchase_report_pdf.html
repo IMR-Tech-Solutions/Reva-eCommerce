@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Purchase Report - {{ current_date|date:"Y-m-d" }}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Outfit", "Helvetica Neue", Helvetica, Arial, sans-serif;
+        font-size: 11px;
+        color: #333;
+        padding: 20px;
+        line-height: 1.4;
+        max-width: 100%;
+      }
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+      }
+      .logo {
+        height: 60px;
+        object-fit: contain;
+      }
+      .report-title {
+        font-size: 24px;
+        font-weight: bold;
+        color: #223152;
+      }
+      .report-meta {
+        font-size: 12px;
+        color: #666;
+      }
+      .divider {
+        height: 2px;
+        background: #223152;
+        margin: 15px 0;
+      }
+      .section {
+        margin-bottom: 20px;
+        page-break-inside: avoid;
+      }
+      .section-title {
+        font-weight: bold;
+        color: #223152;
+        margin-bottom: 10px;
+        font-size: 16px;
+        border-bottom: 1px solid #ccc;
+        padding-bottom: 5px;
+      }
+      .info-grid {
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        margin-bottom: 15px;
+      }
+      .info-box {
+        width: 48%;
+        background-color: #f8f9fa;
+        padding: 10px;
+        border-radius: 5px;
+        border-left: 4px solid #223152;
+      }
+      .summary-cards {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+      }
+      .summary-card {
+        width: 23%;
+        background-color: #223152;
+        color: white;
+        padding: 15px;
+        text-align: center;
+        border-radius: 5px;
+        margin-bottom: 10px;
+      }
+      .summary-card h4 {
+        margin: 0;
+        font-size: 14px;
+        font-weight: 600;
+      }
+      .summary-card .value {
+        font-size: 18px;
+        font-weight: bold;
+        margin-top: 5px;
+      }
+      .table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+      }
+      .table th,
+      .table td {
+        padding: 8px 6px;
+        border: 1px solid #ddd;
+        font-size: 10px;
+        text-align: left;
+      }
+      .table th {
+        background-color: #223152;
+        color: white;
+        font-weight: bold;
+      }
+      .table tbody tr:nth-child(even) {
+        background-color: #f8f9fa;
+      }
+      .footer {
+        font-size: 9px;
+        color: #2f3542;
+        text-align: center;
+        margin-top: 30px;
+        border-top: 2px solid #223152;
+        padding-top: 10px;
+      }
+      .no-data {
+        text-align: center;
+        color: #666;
+        font-style: italic;
+        padding: 20px;
+      }
+      @media print {
+        .section {
+          page-break-inside: avoid;
+        }
+      }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+      <img src="../../media/default/default.png" class="logo" alt="Company Logo" />
+      <div>
+        <div class="report-title">Purchase Report</div>
+        <div class="report-meta">Generated on: {{ current_date|date:"F d, Y g:i A" }}</div>
+        <div class="report-meta">
+          Period: 
+          {% if data.date_range.start_date %}{{ data.date_range.start_date|date:"M d, Y" }}{% else %}All Time{% endif %} - 
+          {% if data.date_range.end_date %}{{ data.date_range.end_date|date:"M d, Y" }}{% else %}Present{% endif %}
+        </div>
+      </div>
+    </div>
+    <div class="divider"></div>
+    
+    <!-- Report Filters -->
+    <div class="section">
+      <div class="section-title">Report Filters</div>
+      <div class="info-grid">
+        <div class="info-box">
+          <strong>Vendor:</strong> {{ data.vendor.name }}<br />
+          {% if data.vendor.contact_person %}
+          <strong>Contact Person:</strong> {{ data.vendor.contact_person }}<br />
+          {% endif %}
+          <strong>Filter Type:</strong> {{ data.filter_type|capfirst }}<br />
+        </div>
+        <div class="info-box">
+          <strong>Date Range:</strong><br />
+          {% if data.date_range.start_date %}
+          From: {{ data.date_range.start_date|date:"M d, Y" }}<br />
+          {% endif %}
+          {% if data.date_range.end_date %}
+          To: {{ data.date_range.end_date|date:"M d, Y" }}<br />
+          {% endif %}
+          <strong>Report Generated:</strong> {{ current_date|date:"M d, Y g:i A" }}
+        </div>
+      </div>
+    </div>
+    
+    <!-- Summary Cards -->
+    <div class="section">
+      <div class="section-title">Purchase Summary</div>
+      <div class="summary-cards">
+        <div class="summary-card">
+          <h4>Total Quantity</h4>
+          <div class="value">{{ data.summary.total_quantity_purchased|floatformat:0 }}</div>
+        </div>
+        <div class="summary-card">
+          <h4>Total Amount</h4>
+          <div class="value">₹{{ data.summary.total_amount_spent|floatformat:2 }}</div>
+        </div>
+        <div class="summary-card">
+          <h4>Total Batches</h4>
+          <div class="value">{{ data.summary.total_batches }}</div>
+        </div>
+        <div class="summary-card">
+          <h4>Avg. Batch Value</h4>
+          <div class="value">₹{{ data.summary.average_batch_value|floatformat:2 }}</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Products Purchased -->
+    <div class="section">
+      <div class="section-title">Products Purchased</div>
+      {% if data.products %}
+      <table class="table">
+        <thead>
+          <tr>
+            <th>S.No.</th>
+            <th>Product Name</th>
+            <th>Vendor</th>
+            <th>Total Quantity</th>
+            <th>Total Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for product in data.products %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ product.product_name }}</td>
+            <td>{{ product.vendor_name }}</td>
+            <td>{{ product.total_quantity|floatformat:0 }}</td>
+            <td>₹{{ product.total_amount|floatformat:2 }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <div class="no-data">No products found for the selected criteria.</div>
+      {% endif %}
+    </div>
+            
+    <!-- Footer -->
+    <div class="footer">
+      <div>
+        © {{ current_date|date:"Y" }} <strong style="color: #223152">inventa | IMRTS</strong> |
+        All rights reserved.
+      </div>
+      <br>
+      <span style="font-size: 10px; color: #2f3542">
+        <strong style="color: #223152">inventa</strong> by
+        <strong style="color: #2f3542">IMR Tech Solutions</strong>
+      </span>
+    </div>
+</body>
+</html>
