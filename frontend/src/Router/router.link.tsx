@@ -594,4 +594,10 @@ export const ecommerceRoutes = [
     link: ecommerceLinks.ecommerceHome,
     element: <EcommerceHome />,
   },
+  {
+    id: "2",
+    name: "Redhi gohel",
+    link: "reedhi",
+    element: <Home />,
+  },
 ];
