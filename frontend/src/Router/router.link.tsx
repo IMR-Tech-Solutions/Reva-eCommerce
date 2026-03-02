@@ -5,6 +5,9 @@ import { admin_modules } from "../modules/adminmodules";
 import { admin_routes } from "./adminRoutes";
 import { ecommerceLinks } from "../ecommerce-pages/ecommerceRoutes";
 import EcommerceHome from "../ecommerce-pages/pages/EcommerceHome";
+import CategoryPage from "../ecommerce-pages/pages/CategoryPage";
+import Category from "../ecommerce-pages/pages/Category";
+import EcommerceAboutPage from "../ecommerce-pages/pages/EcommerceAboutPage";
 const AdminTaxReport = lazy(() => import("../Admin/Reports/AdminTaxReport"));
 const TaxReport = lazy(() => import("../pages/Reports/TaxReport"));
 const AdminBrokerReport = lazy(
@@ -593,5 +596,23 @@ export const ecommerceRoutes = [
     name: "EcommerceHome",
     link: ecommerceLinks.ecommerceHome,
     element: <EcommerceHome />,
+  },
+  {
+    id: "2",
+    name: "EcommerceCategory",
+    link: ecommerceLinks.layoutcategory,
+    element: <CategoryPage />,
+  },
+  {
+    id: "3",
+    name: "Category",
+    link: ecommerceLinks.category,
+    element: <Category />,
+  },
+  {
+    id: "4",
+    name: "EcommerceAboutPage",
+    link: ecommerceLinks.EcommerceAboutPage,
+    element: <EcommerceAboutPage />,
   },
 ];
