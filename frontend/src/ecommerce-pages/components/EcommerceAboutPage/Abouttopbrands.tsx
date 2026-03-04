@@ -1,4 +1,3 @@
-import React from 'react';
 
 const brands = [
   { name: "3M", img: "https://placehold.co/200x100?text=3M" },
