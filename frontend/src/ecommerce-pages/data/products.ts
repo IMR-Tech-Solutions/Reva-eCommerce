@@ -22,7 +22,7 @@ export const products: Product[] = [
     capacity: "1000L",
     pressure: "High Pressure",
     price: 1250000,
-    image: "/products/reactor-ss-batch-1000l.jpg",
+    image: "/ecommerce-images/products/reactor-ss-batch-1000l.jpg",
   },
   {
     id: 2,
@@ -32,7 +32,7 @@ export const products: Product[] = [
     capacity: "500L",
     pressure: "Medium Pressure",
     price: 850000,
-    image: "/products/reactor-ms-continuous-500l.jpg",
+    image: "/ecommerce-images/products/reactor-ms-continuous-500l.jpg",
   },
   {
     id: 3,
@@ -42,7 +42,7 @@ export const products: Product[] = [
     capacity: "200L",
     pressure: "High Pressure",
     price: 950000,
-    image: "/products/reactor-gmp-pharma-200l.jpg",
+    image: "/ecommerce-images/products/reactor-gmp-pharma-200l.jpg",
   },
   {
     id: 4,
@@ -52,7 +52,7 @@ export const products: Product[] = [
     capacity: "300L",
     pressure: "Low Pressure",
     price: 1450000,
-    image: "/products/reactor-glass-lined-300l.jpg",
+    image: "/ecommerce-images/products/reactor-glass-lined-300l.jpg",
   },
 
   // 🔥 2️⃣ HEAT TRANSFER EQUIPMENT (4 products)
@@ -64,7 +64,7 @@ export const products: Product[] = [
     capacity: "10m² Area",
     pressure: "Medium Pressure",
     price: 325000,
-    image: "/products/heat-exchanger-shell-tube-10m2.jpg",
+    image: "/ecommerce-images/products/heat-exchanger-shell-tube-10m2.jpg",
   },
   {
     id: 6,
@@ -74,7 +74,7 @@ export const products: Product[] = [
     capacity: "5m² Area",
     pressure: "Low Pressure",
     price: 185000,
-    image: "/products/heat-exchanger-plate-5m2.jpg",
+    image: "/ecommerce-images/products/heat-exchanger-plate-5m2.jpg",
   },
   {
     id: 7,
@@ -84,7 +84,7 @@ export const products: Product[] = [
     capacity: "2TPH",
     pressure: "High Pressure",
     price: 750000,
-    image: "/products/steam-boiler-2tph.jpg",
+    image: "/ecommerce-images/products/steam-boiler-2tph.jpg",
   },
   {
     id: 8,
@@ -94,7 +94,7 @@ export const products: Product[] = [
     capacity: "50TR",
     pressure: "Low Pressure",
     price: 425000,
-    image: "/products/condenser-air-cooled-50tr.jpg",
+    image: "/ecommerce-images/products/condenser-air-cooled-50tr.jpg",
   },
 
   // 🔬 3️⃣ SEPARATION EQUIPMENT (4 products)
@@ -105,7 +105,7 @@ export const products: Product[] = [
     material: "SS316",
     capacity: "500L",
     price: 875000,
-    image: "/products/distillation-column-500l.jpg",
+    image: "/ecommerce-images/products/distillation-column-500l.jpg",
   },
   {
     id: 10,
@@ -115,7 +115,7 @@ export const products: Product[] = [
     flowRate: "2m³/hr",
     motorHP: "15HP",
     price: 1250000,
-    image: "/products/centrifuge-decanter-2m3.jpg",
+    image: "/ecommerce-images/products/centrifuge-decanter-2m3.jpg",
   },
   {
     id: 11,
@@ -124,7 +124,7 @@ export const products: Product[] = [
     material: "PP Plates",
     capacity: "500mm Plates",
     price: 285000,
-    image: "/products/filter-press-500mm.jpg",
+    image: "/ecommerce-images/products/filter-press-500mm.jpg",
   },
   {
     id: 12,
@@ -133,7 +133,7 @@ export const products: Product[] = [
     material: "SS316",
     flowRate: "1000LPM",
     price: 125000,
-    image: "/products/bag-filter-1000lpm.jpg",
+    image: "/ecommerce-images/products/bag-filter-1000lpm.jpg",
   },
 
   // 💧 4️⃣ FLUID HANDLING EQUIPMENT (4 products)
@@ -145,7 +145,7 @@ export const products: Product[] = [
     flowRate: "50m³/hr",
     motorHP: "10HP",
     price: 125000,
-    image: "/products/pump-centrifugal-50m3.jpg",
+    image: "/ecommerce-images/products/pump-centrifugal-50m3.jpg",
   },
   {
     id: 14,
@@ -155,7 +155,7 @@ export const products: Product[] = [
     flowRate: "20m³/hr",
     motorHP: "7.5HP",
     price: 185000,
-    image: "/products/pump-diaphragm-20m3.jpg",
+    image: "/ecommerce-images/products/pump-diaphragm-20m3.jpg",
   },
   {
     id: 15,
@@ -165,7 +165,7 @@ export const products: Product[] = [
     motorHP: "5HP",
     pressure: "8 Bar",
     price: 245000,
-    image: "/products/compressor-reciprocating-5hp.jpg",
+    image: "/ecommerce-images/products/compressor-reciprocating-5hp.jpg",
   },
   {
     id: 16,
@@ -173,7 +173,7 @@ export const products: Product[] = [
     category: "fluid-handling-equipment",
     material: "SS304",
     price: 8500,
-    image: "/products/valve-butterfly-6inch.jpg",
+    image: "/ecommerce-images/products/valve-butterfly-6inch.jpg",
   },
 
   // 🪨 5️⃣ SIZE REDUCTION EQUIPMENT (4 products)
@@ -184,7 +184,7 @@ export const products: Product[] = [
     material: "MS",
     motorHP: "25HP",
     price: 525000,
-    image: "/products/crusher-jaw-16x10.jpg",
+    image: "/ecommerce-images/products/crusher-jaw-16x10.jpg",
   },
   {
     id: 18,
@@ -193,7 +193,7 @@ export const products: Product[] = [
     material: "MS",
     motorHP: "50HP",
     price: 425000,
-    image: "/products/hammer-mill-50hp.jpg",
+    image: "/ecommerce-images/products/hammer-mill-50hp.jpg",
   },
   {
     id: 19,
@@ -203,7 +203,7 @@ export const products: Product[] = [
     capacity: "1000kg/hr",
     motorHP: "30HP",
     price: 785000,
-    image: "/products/ball-mill-1000kg.jpg",
+    image: "/ecommerce-images/products/ball-mill-1000kg.jpg",
   },
   {
     id: 20,
@@ -213,7 +213,7 @@ export const products: Product[] = [
     capacity: "500kg/hr",
     motorHP: "20HP",
     price: 325000,
-    image: "/products/pulverizer-impact-500kg.jpg",
+    image: "/ecommerce-images/products/pulverizer-impact-500kg.jpg",
   },
 
   // 🥣 6️⃣ MIXING EQUIPMENT (4 products)
@@ -225,7 +225,7 @@ export const products: Product[] = [
     capacity: "2000L",
     motorHP: "5HP",
     price: 425000,
-    image: "/products/mixer-agitator-tank-2000l.jpg",
+    image: "/ecommerce-images/products/mixer-agitator-tank-2000l.jpg",
   },
   {
     id: 22,
@@ -235,7 +235,7 @@ export const products: Product[] = [
     capacity: "1000kg",
     motorHP: "15HP",
     price: 285000,
-    image: "/products/ribbon-blender-1000kg.jpg",
+    image: "/ecommerce-images/products/ribbon-blender-1000kg.jpg",
   },
   {
     id: 23,
@@ -245,7 +245,7 @@ export const products: Product[] = [
     capacity: "500kg",
     motorHP: "7.5HP",
     price: 375000,
-    image: "/products/double-cone-blender-500kg.jpg",
+    image: "/ecommerce-images/products/double-cone-blender-500kg.jpg",
   },
   {
     id: 24,
@@ -255,6 +255,6 @@ export const products: Product[] = [
     capacity: "100L",
     motorHP: "10HP",
     price: 625000,
-    image: "/products/high-shear-mixer-100l.jpg",
+    image: "/ecommerce-images/products/high-shear-mixer-100l.jpg",
   },
 ];
