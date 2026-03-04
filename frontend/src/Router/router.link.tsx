@@ -617,13 +617,13 @@ export const ecommerceRoutes = [
     link: ecommerceLinks.EcommerceAboutPage,
     element: <EcommerceAboutPage />,
   },
-   {
+  {
     id: "5",
     name: "EcommerceShop",
     link: ecommerceLinks.EcommerceShop,
     element: <EcommerceShop />,
   },
-    {
+  {
     id: "6",
     name: "ProductDetail",
     link: ecommerceLinks.ProductDetail,
