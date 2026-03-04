@@ -157,13 +157,13 @@ const CategoryPage = () => {
                 >
 
                   {/* Image Area */}
-                  <div className="w-full h-52 bg-gradient-to-br from-[#F5F5F5] to-gray-100 flex items-center justify-center p-6 overflow-hidden">
-                    <div className="w-20 h-20 bg-white rounded-full border-2 border-[#FFB700]/20 flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform duration-300">
-                      <span className="text-3xl font-black text-[#FFB700]">
-                        {product.name.charAt(0)}
-                      </span>
-                    </div>
-                  </div>
+                <div className="w-full h-52 bg-[#F5F5F5] flex items-center justify-center overflow-hidden">
+  <img
+    src={product.image}
+    alt={product.name}
+    className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-300"
+  />
+</div>
 
                   {/* Divider */}
                   <div className="h-px bg-gray-100" />
