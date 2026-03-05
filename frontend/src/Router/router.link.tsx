@@ -10,7 +10,7 @@ import Category from "../ecommerce-pages/pages/Category";
 import EcommerceAboutPage from "../ecommerce-pages/pages/EcommerceAboutPage";
 import EcommerceShop from "../ecommerce-pages/pages/EcommerceShop";
 import ProductDetail from "../ecommerce-pages/pages/ProductDetail";
-import EcommerceContact from "../ecommerce-pages/pages/EcommerceContact";
+import EcommerceContact from "../ecommerce-pages/pages/EcommerceContactus";
 const AdminTaxReport = lazy(() => import("../Admin/Reports/AdminTaxReport"));
 const TaxReport = lazy(() => import("../pages/Reports/TaxReport"));
 const AdminBrokerReport = lazy(
