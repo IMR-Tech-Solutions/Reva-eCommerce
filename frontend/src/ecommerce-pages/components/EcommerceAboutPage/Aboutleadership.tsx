@@ -1,5 +1,3 @@
-import React from 'react';
-
 const leaders = [
   {
     name: "Greg Nelson",
