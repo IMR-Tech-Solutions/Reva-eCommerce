@@ -11,6 +11,8 @@ import EcommerceAboutPage from "../ecommerce-pages/pages/EcommerceAboutPage";
 import EcommerceShop from "../ecommerce-pages/pages/EcommerceShop";
 import ProductDetail from "../ecommerce-pages/pages/ProductDetail";
 import EcommerceContact from "../ecommerce-pages/pages/EcommerceContact";
+import SingleBlogPage from "../ecommerce-pages/pages/SingleBlogPage";
+import DeatiledBlog from "../ecommerce-pages/pages/DeatiledBlog";
 const AdminTaxReport = lazy(() => import("../Admin/Reports/AdminTaxReport"));
 const TaxReport = lazy(() => import("../pages/Reports/TaxReport"));
 const AdminBrokerReport = lazy(
@@ -635,5 +637,17 @@ export const ecommerceRoutes = [
     name: "ContactEcommerce",
     link: ecommerceLinks.EcommerceContact,
     element: <EcommerceContact />,
+  },
+  {
+    id: "8",
+    name: "BlogPage",
+    link: ecommerceLinks.EcomerceBlog,
+    element: <SingleBlogPage />,
+  },
+  {
+    id: "9",
+    name: "SingelBlogPage",
+    link: ecommerceLinks.EcommerecSingleBlogPage,
+    element: <DeatiledBlog />,
   },
 ];
