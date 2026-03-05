@@ -10,6 +10,9 @@ import Category from "../ecommerce-pages/pages/Category";
 import EcommerceAboutPage from "../ecommerce-pages/pages/EcommerceAboutPage";
 import EcommerceShop from "../ecommerce-pages/pages/EcommerceShop";
 import ProductDetail from "../ecommerce-pages/pages/ProductDetail";
+import EcommerceContact from "../ecommerce-pages/pages/EcommerceContact";
+import SingleBlogPage from "../ecommerce-pages/pages/SingleBlogPage";
+import DeatiledBlog from "../ecommerce-pages/pages/DeatiledBlog";
 const AdminTaxReport = lazy(() => import("../Admin/Reports/AdminTaxReport"));
 const TaxReport = lazy(() => import("../pages/Reports/TaxReport"));
 const AdminBrokerReport = lazy(
@@ -617,16 +620,34 @@ export const ecommerceRoutes = [
     link: ecommerceLinks.EcommerceAboutPage,
     element: <EcommerceAboutPage />,
   },
-   {
+  {
     id: "5",
     name: "EcommerceShop",
     link: ecommerceLinks.EcommerceShop,
     element: <EcommerceShop />,
   },
-    {
+  {
     id: "6",
     name: "ProductDetail",
     link: ecommerceLinks.ProductDetail,
     element: <ProductDetail />,
+  },
+  {
+    id: "7",
+    name: "ContactEcommerce",
+    link: ecommerceLinks.EcommerceContact,
+    element: <EcommerceContact />,
+  },
+  {
+    id: "8",
+    name: "BlogPage",
+    link: ecommerceLinks.EcomerceBlog,
+    element: <SingleBlogPage />,
+  },
+  {
+    id: "9",
+    name: "SingelBlogPage",
+    link: ecommerceLinks.EcommerecSingleBlogPage,
+    element: <DeatiledBlog />,
   },
 ];
