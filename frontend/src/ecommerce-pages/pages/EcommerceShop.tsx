@@ -1,6 +1,8 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router";
 import { products, Product } from "../data/products";
+import { useCart } from "../context/CartContext";
+import { toast } from "react-toastify";
 import {
   ChevronDown,
   ChevronUp,
@@ -52,10 +54,9 @@ const RadioOption = ({
     type="button"
     onClick={onClick}
     className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left text-sm transition-all duration-150
-      ${
-        selected
-          ? "bg-[#FFB700]/10 border border-[#FFB700] text-[#1C1C1E] font-bold"
-          : "border border-transparent hover:bg-gray-50 text-gray-600 hover:text-[#1C1C1E]"
+      ${selected
+        ? "bg-[#FFB700]/10 border border-[#FFB700] text-[#1C1C1E] font-bold"
+        : "border border-transparent hover:bg-gray-50 text-gray-600 hover:text-[#1C1C1E]"
       }`}
   >
     <div
@@ -110,6 +111,10 @@ const FilterBlock = ({
   </div>
 );
 
+const addedToCart = (productName: string) => {
+  toast.success(`${productName} added to quote cart`);
+};
+
 // ── Product Card ──
 const ProductCard = ({
   product,
@@ -118,6 +123,7 @@ const ProductCard = ({
   product: Product;
   onViewDetails: () => void;
 }) => {
+  const { addToCart } = useCart();
   const [qty, setQty] = useState(1);
 
   const specs = [
@@ -225,8 +231,10 @@ const ProductCard = ({
           {/* Add to Quote */}
           <button
             type="button"
-            onClick={() => {
-              // hook up your quote logic here
+            onClick={(e) => {
+              e.stopPropagation();
+              addToCart(product, qty);
+              addedToCart(product.name);
             }}
             className="w-full flex items-center justify-center gap-2 text-xs font-black uppercase tracking-wide
               text-[#1C1C1E] bg-[#FFB700] hover:bg-[#FFC933] hover:shadow-md hover:shadow-[#FFB700]/20
@@ -266,32 +274,32 @@ const EcommerceShop = () => {
   const navigate = useNavigate();
 
   const priceRange = useMemo(() => getPriceRange(allProducts), [allProducts]);
-  const materials  = useMemo(() => uniqueValues(allProducts, "material"),  [allProducts]);
-  const pressures  = useMemo(() => uniqueValues(allProducts, "pressure"),  [allProducts]);
-  const flowRates  = useMemo(() => uniqueValues(allProducts, "flowRate"),  [allProducts]);
-  const motorHPs   = useMemo(() => uniqueValues(allProducts, "motorHP"),   [allProducts]);
-  const categories = useMemo(() => uniqueValues(allProducts, "category"),  [allProducts]);
+  const materials = useMemo(() => uniqueValues(allProducts, "material"), [allProducts]);
+  const pressures = useMemo(() => uniqueValues(allProducts, "pressure"), [allProducts]);
+  const flowRates = useMemo(() => uniqueValues(allProducts, "flowRate"), [allProducts]);
+  const motorHPs = useMemo(() => uniqueValues(allProducts, "motorHP"), [allProducts]);
+  const categories = useMemo(() => uniqueValues(allProducts, "category"), [allProducts]);
 
-  const [searchTerm,       setSearchTerm]       = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedMaterial, setSelectedMaterial] = useState<string | null>(null);
   const [selectedPressure, setSelectedPressure] = useState<string | null>(null);
   const [selectedFlowRate, setSelectedFlowRate] = useState<string | null>(null);
-  const [selectedMotorHP,  setSelectedMotorHP]  = useState<string | null>(null);
-  const [price,            setPrice]            = useState<number>(
+  const [selectedMotorHP, setSelectedMotorHP] = useState<string | null>(null);
+  const [price, setPrice] = useState<number>(
     () => Math.max(...products.map((p) => p.price))
   );
-  const [sort,             setSort]             = useState<SortOption>("default");
-  const [currentPage,      setCurrentPage]      = useState(1);
+  const [sort, setSort] = useState<SortOption>("default");
+  const [currentPage, setCurrentPage] = useState(1);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
   const [openBlocks, setOpenBlocks] = useState<Record<string, boolean>>({
     category: true,
-    price:    true,
+    price: true,
     material: true,
     pressure: false,
-    flow:     false,
-    motor:    false,
+    flow: false,
+    motor: false,
   });
 
   const toggleBlock = (key: string) =>
@@ -307,12 +315,12 @@ const EcommerceShop = () => {
     if (selectedMaterial) list = list.filter((p) => p.material === selectedMaterial);
     if (selectedPressure) list = list.filter((p) => p.pressure === selectedPressure);
     if (selectedFlowRate) list = list.filter((p) => p.flowRate === selectedFlowRate);
-    if (selectedMotorHP)  list = list.filter((p) => p.motorHP  === selectedMotorHP);
+    if (selectedMotorHP) list = list.filter((p) => p.motorHP === selectedMotorHP);
     list = list.filter((p) => p.price <= price);
     list.sort((a, b) => {
-      if (sort === "price-asc")  return a.price - b.price;
+      if (sort === "price-asc") return a.price - b.price;
       if (sort === "price-desc") return b.price - a.price;
-      if (sort === "name-asc")   return a.name.localeCompare(b.name);
+      if (sort === "name-asc") return a.name.localeCompare(b.name);
       return 0;
     });
     return list;
@@ -321,9 +329,9 @@ const EcommerceShop = () => {
     selectedPressure, selectedFlowRate, selectedMotorHP, price, sort,
   ]);
 
-  const totalPages    = Math.max(1, Math.ceil(filteredProducts.length / PRODUCTS_PER_PAGE));
-  const safePage      = Math.min(currentPage, totalPages);
-  const startIndex    = (safePage - 1) * PRODUCTS_PER_PAGE;
+  const totalPages = Math.max(1, Math.ceil(filteredProducts.length / PRODUCTS_PER_PAGE));
+  const safePage = Math.min(currentPage, totalPages);
+  const startIndex = (safePage - 1) * PRODUCTS_PER_PAGE;
   const pagedProducts = filteredProducts.slice(startIndex, startIndex + PRODUCTS_PER_PAGE);
 
   const goToPage = (page: number) => {
