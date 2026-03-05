@@ -4,6 +4,7 @@ import {
   Truck, ShieldCheck, RefreshCcw, LayoutGrid,
   MessageCircle
 } from "lucide-react";
+import { ecommerceLinks } from "../ecommerceRoutes";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -11,17 +12,17 @@ const Footer = () => {
   const infoLinks = [
     { label: "About us",             href: "/about" },
     { label: "Delivery Information", href: "/delivery" },
-    { label: "Privacy Policy",       href: "/privacy" },
+    { label: "Privacy Policy",       href: ecommerceLinks.PrivacyPolicy },
     { label: "Sales",                href: "/sales" },
-    { label: "Terms & Conditions",   href: "/terms" },
+    { label: "Terms & Conditions",   href: ecommerceLinks.TermsAndConditions },
   ];
 
   const accountLinks = [
-    { label: "My account", href: "/account" },
+    { label: "My account", href: ecommerceLinks.Account },
     { label: "Wishlist",   href: "/wishlist" },
-    { label: "My Orders",  href: "/orders" },
+    { label: "My Orders",  href: ecommerceLinks.AccountOrder },
     { label: "Returns",    href: "/returns" },
-    { label: "Shipping",   href: "/shipping" },
+    { label: "Shipping",   href: ecommerceLinks.Shipping },
   ];
 
   const storeLinks = [

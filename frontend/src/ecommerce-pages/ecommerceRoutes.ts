@@ -8,4 +8,11 @@ export const ecommerceLinks = {
   EcommerceContact: "/contact",
   EcomerceBlog: "/blogs",
   EcommerecSingleBlogPage: "/blog/:blogId",
+  PrivacyPolicy: "/privacy",
+  TermsAndConditions: "/terms",
+  Shipping: "/shipping",
+  Account: "/account",
+  AccountOrder: "/account-orders",
+  Cart: "/cart",
+  Checkout: "/checkout",
 };

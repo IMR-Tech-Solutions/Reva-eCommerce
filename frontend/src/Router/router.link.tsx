@@ -14,6 +14,12 @@ import ProductDetail from "../ecommerce-pages/pages/ProductDetail";
 import SingleBlogPage from "../ecommerce-pages/pages/SingleBlogPage";
 import DeatiledBlog from "../ecommerce-pages/pages/DeatiledBlog";
 import EcommerceContactus from "../ecommerce-pages/pages/EcommerceContactus";
+import TermsConditions from "../ecommerce-pages/pages/Terms&Conditions";
+import PrivacyPolicy from "../ecommerce-pages/pages/PrivacyPolicy";
+import Accounts from "../ecommerce-pages/pages/Accounts";
+import AccountOrders from "../ecommerce-pages/pages/AccountOrders";
+import CartPage from "../ecommerce-pages/pages/CartPage";
+import CheckoutPage from "../ecommerce-pages/pages/CheckoutPage";
 const AdminTaxReport = lazy(() => import("../Admin/Reports/AdminTaxReport"));
 const TaxReport = lazy(() => import("../pages/Reports/TaxReport"));
 const AdminBrokerReport = lazy(
@@ -650,5 +656,41 @@ export const ecommerceRoutes = [
     name: "SingelBlogPage",
     link: ecommerceLinks.EcommerecSingleBlogPage,
     element: <DeatiledBlog />,
+  },
+  {
+    id: "10",
+    name: "Terms and conditions",
+    link: ecommerceLinks.TermsAndConditions,
+    element: <TermsConditions />,
+  },
+  {
+    id: "11",
+    name: "Privacy Policy",
+    link: ecommerceLinks.PrivacyPolicy,
+    element: <PrivacyPolicy />,
+  },
+  {
+    id: "12",
+    name: "Accounts",
+    link: ecommerceLinks.Account,
+    element: <Accounts />,
+  },
+  {
+    id: "13",
+    name: "Accounts Orders",
+    link: ecommerceLinks.AccountOrder,
+    element: <AccountOrders />,
+  },
+  {
+    id: "14",
+    name: "Cart Page",
+    link: ecommerceLinks.Cart,
+    element: <CartPage />,
+  },
+  {
+    id: "15",
+    name: "Checkout Page",
+    link: ecommerceLinks.Checkout,
+    element: <CheckoutPage />,
   },
 ];
