@@ -13,25 +13,19 @@ const Footer = () => {
     { label: "About us",             href: "/about" },
     { label: "Delivery Information", href: "/delivery" },
     { label: "Privacy Policy",       href: ecommerceLinks.PrivacyPolicy },
-    { label: "Sales",                href: "/sales" },
+
     { label: "Terms & Conditions",   href: ecommerceLinks.TermsAndConditions },
   ];
 
   const accountLinks = [
     { label: "My account", href: ecommerceLinks.Account },
-    { label: "Wishlist",   href: "/wishlist" },
+
     { label: "My Orders",  href: ecommerceLinks.AccountOrder },
     { label: "Returns",    href: "/returns" },
     { label: "Shipping",   href: ecommerceLinks.Shipping },
   ];
 
-  const storeLinks = [
-    { label: "Affiliate",       href: "/affiliate" },
-    { label: "Bestsellers",     href: "/bestsellers" },
-    { label: "Discount",        href: "/discount" },
-    { label: "Latest Products", href: "/latest" },
-    { label: "Sale",            href: "/sale" },
-  ];
+
 
   const offers = [
     { icon: Truck,       title: "Free delivery", sub: "Worldwide from $27" },
@@ -87,7 +81,7 @@ const Footer = () => {
       {/* ══ MAIN FOOTER — secondary dark ══ */}
       <div className="bg-[#1C1C1E] text-white">
         <div className="max-w-7xl mx-auto px-6 py-12">
-          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr_1.4fr] gap-10">
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1.4fr] gap-10">
 
             {/* ── Col 1: Logo + Social + Address ── */}
             <div className="flex flex-col gap-5">
@@ -159,25 +153,7 @@ const Footer = () => {
               </ul>
             </div>
 
-            {/* ── Col 4: Store ── */}
-            <div>
-              <h4 className="text-[#FFB700] font-black text-sm mb-5 uppercase tracking-wide">
-                Store
-              </h4>
-              <ul className="flex flex-col gap-3">
-                {storeLinks.map(({ label, href }) => (
-                  <li key={label}>
-                    <a
-                      href={href}
-                      className="text-gray-500 hover:text-[#FFB700] text-sm transition-colors duration-150"
-                    >
-                      {label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
+          
             {/* ── Col 5: Need Help ── */}
             <div className="flex flex-col gap-4">
               <p className="text-white text-sm">

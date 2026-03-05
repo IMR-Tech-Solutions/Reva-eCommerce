@@ -1,6 +1,7 @@
 import { useParams, useNavigate } from "react-router";
 import { useState } from "react";
 import { products, Product } from "../data/products";
+import { useCart } from "../context/CartContext";
 import {
   SlidersHorizontal,
   Package,
@@ -18,12 +19,12 @@ import {
 type SortOption = "default" | "price-asc" | "price-desc" | "name-asc";
 
 const categoryNames: Record<string, string> = {
-  reactors:                    "Reactors",
-  "heat-transfer-equipment":   "Heat Transfer Equipment",
-  "separation-equipment":      "Separation Equipment",
-  "fluid-handling-equipment":  "Fluid Handling Equipment",
-  "size-reduction-equipment":  "Size Reduction Equipment",
-  "mixing-equipment":          "Mixing Equipment",
+  reactors: "Reactors",
+  "heat-transfer-equipment": "Heat Transfer Equipment",
+  "separation-equipment": "Separation Equipment",
+  "fluid-handling-equipment": "Fluid Handling Equipment",
+  "size-reduction-equipment": "Size Reduction Equipment",
+  "mixing-equipment": "Mixing Equipment",
 };
 
 const formatPrice = (v: number) => `₹${v.toLocaleString("en-IN")}`;
@@ -36,12 +37,15 @@ const ProductCard = ({
   product: Product;
   navigate: (path: string) => void;
 }) => {
-  const [qty, setQty]     = useState(1);
+  const { addToCart } = useCart();
+  const [qty, setQty] = useState(1);
   const [added, setAdded] = useState(false);
 
   const handleAddToQuote = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setAdded((prev) => !prev);
+    addToCart(product, qty);
+    setAdded(true);
+    setTimeout(() => setAdded(false), 2000);
   };
 
   return (
@@ -79,8 +83,8 @@ const ProductCard = ({
             { label: "Material", val: product.material },
             { label: "Capacity", val: product.capacity },
             { label: "Pressure", val: product.pressure },
-            { label: "Flow",     val: product.flowRate },
-            { label: "Motor",    val: product.motorHP  },
+            { label: "Flow", val: product.flowRate },
+            { label: "Motor", val: product.motorHP },
           ]
             .filter((s) => s.val)
             .slice(0, 3)
@@ -169,11 +173,11 @@ const ProductCard = ({
 
 // ══ MAIN COMPONENT ══
 const CategoryPage = () => {
-  const { slug }   = useParams<{ slug: string }>();
-  const navigate   = useNavigate();
+  const { slug } = useParams<{ slug: string }>();
+  const navigate = useNavigate();
 
   const [search, setSearch] = useState("");
-  const [sort, setSort]     = useState<SortOption>("default");
+  const [sort, setSort] = useState<SortOption>("default");
   const [visibleCount, setVisibleCount] = useState(8);
 
   const categoryLabel =
@@ -186,15 +190,15 @@ const CategoryPage = () => {
     );
 
   const sorted = [...filtered].sort((a, b) => {
-    if (sort === "price-asc")  return a.price - b.price;
+    if (sort === "price-asc") return a.price - b.price;
     if (sort === "price-desc") return b.price - a.price;
-    if (sort === "name-asc")   return a.name.localeCompare(b.name);
+    if (sort === "name-asc") return a.name.localeCompare(b.name);
     return 0;
   });
 
-  const visible     = sorted.slice(0, visibleCount);
-  const hasMore     = visibleCount < sorted.length;
-  const remaining   = sorted.length - visibleCount;
+  const visible = sorted.slice(0, visibleCount);
+  const hasMore = visibleCount < sorted.length;
+  const remaining = sorted.length - visibleCount;
 
   return (
     <div className="bg-[#F5F5F5] min-h-screen">
