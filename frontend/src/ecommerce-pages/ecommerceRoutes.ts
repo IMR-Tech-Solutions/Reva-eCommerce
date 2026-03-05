@@ -6,5 +6,5 @@ export const ecommerceLinks = {
   layoutcategory: "/category/:slug",
   EcommerceAboutPage: "/about",
   EcommerceShop:"/e-commerceshop",
-ProductDetail: "/product/:id",
+ProductDetail: "/e-commerceshop/:id",
 };

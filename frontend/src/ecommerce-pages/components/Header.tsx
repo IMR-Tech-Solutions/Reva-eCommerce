@@ -9,11 +9,11 @@ import {
 
 const NAV_LINKS = [
   { label: "Home",          href: "/" },
-  { label: "Shop by Brand", href: "/brands", badge: "NEW" },
+  { label: "About Us", href: "/about" },
   { label: "Blog",          href: "/blog" },
   { label: "Shop",          href: "/e-commerceshop" },
-  { label: "Elements",      href: "/elements" },
-  { label: "Features",      href: "/features" },
+  { label: "Categories",      href: "/category" },
+  { label: "Contact Us",      href: "/contact" },
 ];
 
 export default function Header() {
@@ -167,18 +167,14 @@ export default function Header() {
 
             {/* Nav links */}
             <nav className="flex items-center gap-0.5">
-              {NAV_LINKS.map(({ label, href, badge }) => (
+              {NAV_LINKS.map(({ label, href }) => (
                 <a
                   key={href}
                   href={href}
                   className="relative px-3.5 py-2 text-sm font-bold text-[#1C1C1E] hover:text-white rounded hover:bg-[#CC9200] transition-colors group"
                 >
                   {label}
-                  {badge && (
-                    <span className="absolute -top-1 -right-1 bg-green-500 text-white text-[8px] font-black px-1.5 py-0.5 rounded-full leading-none">
-                      {badge}
-                    </span>
-                  )}
+                
                 </a>
               ))}
             </nav>
@@ -324,7 +320,7 @@ export default function Header() {
             <p className="text-gray-500 text-xs font-bold uppercase tracking-widest px-3 mb-2">
               Navigation
             </p>
-            {NAV_LINKS.map(({ label, href, badge }) => (
+            {NAV_LINKS.map(({ label, href }) => (
               <a
                 key={href}
                 href={href}
@@ -338,11 +334,7 @@ export default function Header() {
                   />
                 {label}
                 </div>
-                {badge && (
-                  <span className="bg-green-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full">
-                    {badge}
-                  </span>
-                )}
+              
               </a>
             ))}
           </div>
