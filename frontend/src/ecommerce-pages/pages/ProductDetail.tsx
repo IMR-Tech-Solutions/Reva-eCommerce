@@ -1,22 +1,36 @@
-// frontend/src/ecommerce-pages/pages/ProductDetail.tsx
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router";
-import { products, Product } from "../data/products";
+import {
+  getsingleproductservice,
+  getpublicproductsservice,
+} from "../../services/productservices";
+import { ProductData } from "../../types/types";
 import {
   ShoppingCart, Heart, Share2, ChevronRight, CheckCircle,
   Truck, ShieldCheck, RotateCcw, Phone, Star, Minus, Plus,
   Package, Zap, Facebook, Twitter, Linkedin, Mail,
   ArrowLeft, BadgeCheck, Layers, Award, ChevronLeft,
 } from "lucide-react";
+import { handleError } from "../../utils/handleError";
 
 const formatPrice = (v: number) => `₹${v.toLocaleString("en-IN")}`;
+
+// Utility to handle backend image URLs
+const getImageUrl = (imagePath: string) => {
+  if (!imagePath) return "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&q=80"; // Fallback
+  if (imagePath.startsWith("http")) return imagePath;
+
+  const baseUrl = import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000/api/";
+  const domain = baseUrl.replace("/api/", "");
+  return `${domain}${imagePath}`;
+};
 
 // ── Standalone Related Card ──
 const RelatedCard = ({
   rel,
   navigate,
 }: {
-  rel: Product;
+  rel: ProductData;
   navigate: (p: string) => void;
 }) => (
   <div
@@ -26,15 +40,15 @@ const RelatedCard = ({
   >
     <div className="w-full h-44 bg-gradient-to-br from-[#F5F5F5] to-gray-100 flex items-center justify-center p-5 overflow-hidden relative">
       <img
-        src={rel.image}
-        alt={rel.name}
+        src={getImageUrl(rel.product_image)}
+        alt={rel.product_name}
         className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500"
       />
       <div className="absolute inset-0 bg-[#FFB700]/0 group-hover:bg-[#FFB700]/5 transition-colors duration-300" />
     </div>
     <div className="p-4 flex flex-col gap-2 flex-1">
       <h4 className="text-sm font-black text-[#1C1C1E] leading-snug line-clamp-2 group-hover:text-[#FFB700] transition-colors">
-        {rel.name}
+        {rel.product_name}
       </h4>
       {rel.material && (
         <p className="text-[10px] font-bold uppercase tracking-wide text-gray-400">
@@ -42,7 +56,7 @@ const RelatedCard = ({
         </p>
       )}
       <div className="mt-auto pt-3 flex items-center justify-between border-t border-gray-100">
-        <span className="text-[#FFB700] font-black text-base">{formatPrice(rel.price)}</span>
+        <span className="text-[#FFB700] font-black text-base">{formatPrice(Number(rel.price))}</span>
         <span className="text-[10px] font-black uppercase bg-[#FFB700]/10 text-[#CC9200] px-2 py-1 rounded-lg group-hover:bg-[#FFB700] group-hover:text-[#1C1C1E] transition-all">
           View →
         </span>
@@ -53,22 +67,57 @@ const RelatedCard = ({
 );
 
 const ProductDetail = () => {
-  // ✅ FIX 1: use `id` not `name`
-  const { id }     = useParams<{ id: string }>();
-  const navigate   = useNavigate();
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
 
-  // ✅ FIX 2: find by id only
-  const product    = products.find((p: Product) => String(p.id) === String(id));
-
-  const [qty, setQty]                 = useState(1);
+  const [product, setProduct] = useState<ProductData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [related, setRelated] = useState<ProductData[]>([]);
+  const [qty, setQty] = useState(1);
   const [addedToCart, setAddedToCart] = useState(false);
-  const [wishlisted, setWishlisted]   = useState(false);
-  const [activeTab, setActiveTab]     = useState<"specs" | "features" | "shipping">("specs");
+  const [wishlisted, setWishlisted] = useState(false);
+  const [activeTab, setActiveTab] = useState<"specs" | "features" | "shipping">(
+    "specs"
+  );
 
-  // ✅ FIX 3: filter related by id, not slug
-  const related = products
-    .filter((p: Product) => p.category === product?.category && p.id !== product?.id)
-    .slice(0, 4);
+  useEffect(() => {
+    const loadProduct = async () => {
+      if (!id) return;
+      setLoading(true);
+      try {
+        const data = await getsingleproductservice(Number(id));
+        setProduct(data);
+
+        // Optional: Fetch related products by category
+        if (data.category) {
+          const allProds = await getpublicproductsservice();
+          const filtered = allProds
+            .filter(
+              (p: ProductData) =>
+                p.category === data.category && p.id !== data.id
+            )
+            .slice(0, 4);
+          setRelated(filtered);
+        }
+      } catch (err) {
+        handleError(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadProduct();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#F5F5F5] flex items-center justify-center">
+        <div className="animate-pulse flex flex-col items-center gap-4">
+          <div className="w-16 h-16 bg-gray-200 rounded-full"></div>
+          <div className="h-4 w-32 bg-gray-200 rounded"></div>
+        </div>
+      </div>
+    );
+  }
 
   // ── 404 ──
   if (!product) {
@@ -101,20 +150,19 @@ const ProductDetail = () => {
   };
 
   const specs = [
-    { label: "Material",  val: product.material },
-    { label: "Capacity",  val: product.capacity },
-    { label: "Pressure",  val: product.pressure },
-    { label: "Flow Rate", val: product.flowRate },
-    { label: "Motor HP",  val: product.motorHP  },
-    { label: "Category",  val: product.category?.replace(/-/g, " ") },
-    // ✅ FIX 4: SKU uses id only
-    { label: "SKU",       val: `REVA-${String(product.id).padStart(4, "0")}` },
+    { label: "Material", val: product.material },
+    { label: "Capacity", val: product.capacity },
+    { label: "Pressure", val: product.pressure },
+    { label: "Flow Rate", val: product.flow_rate },
+    { label: "Motor HP", val: product.motor_hp },
+    { label: "Category", val: product.category_name },
+    { label: "SKU", val: product.sku_code || `REVA-${String(product.id).padStart(4, "0")}` },
   ].filter((s) => s.val);
 
   const tabs = [
-    { key: "specs",    label: "Specifications" },
-    { key: "features", label: "Features"       },
-    { key: "shipping", label: "Shipping Info"  },
+    { key: "specs", label: "Specifications" },
+    { key: "features", label: "Features" },
+    { key: "shipping", label: "Shipping Info" },
   ] as const;
 
   return (
@@ -151,20 +199,20 @@ const ProductDetail = () => {
                 className="hover:text-[#FFB700] cursor-pointer transition-colors flex-shrink-0 capitalize"
                 onClick={() => navigate(`/category/${product.category}`)}
               >
-                {product.category.replace(/-/g, " ")}
+                {product.category_name}
               </span>
               <ChevronRight size={10} className="flex-shrink-0" />
-              <span className="text-[#1C1C1E] font-bold truncate">{product.name}</span>
+              <span className="text-[#1C1C1E] font-bold truncate">{product.product_name}</span>
             </div>
           </div>
 
           {/* Share */}
           <div className="flex items-center gap-2 flex-shrink-0">
             {[
-              { icon: <Facebook size={13} />, bg: "bg-blue-600",  label: "Facebook" },
-              { icon: <Twitter  size={13} />, bg: "bg-sky-500",   label: "Twitter"  },
-              { icon: <Linkedin size={13} />, bg: "bg-blue-700",  label: "LinkedIn" },
-              { icon: <Share2   size={13} />, bg: "bg-gray-500",  label: "Share"    },
+              { icon: <Facebook size={13} />, bg: "bg-blue-600", label: "Facebook" },
+              { icon: <Twitter size={13} />, bg: "bg-sky-500", label: "Twitter" },
+              { icon: <Linkedin size={13} />, bg: "bg-[#FFB700]", label: "LinkedIn" },
+              { icon: <Share2 size={13} />, bg: "bg-gray-500", label: "Share" },
             ].map((s) => (
               <button
                 key={s.label}
@@ -191,12 +239,12 @@ const ProductDetail = () => {
               <div className="bg-white border border-gray-100 rounded-3xl overflow-hidden shadow-sm">
                 <div className="relative w-full h-80 md:h-96 bg-gradient-to-br from-[#FAFAFA] to-gray-100 flex items-center justify-center p-10">
                   <img
-                    src={product.image}
-                    alt={product.name}
+                    src={getImageUrl(product.product_image)}
+                    alt={product.product_name}
                     className="w-full h-full object-contain drop-shadow-lg"
                   />
                   <div className="absolute top-4 left-4 bg-[#FFB700] text-[#1C1C1E] text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full">
-                    {product.category.replace(/-/g, " ")}
+                    {product.category_name}
                   </div>
                   <div className="absolute top-4 right-4 bg-green-500 text-white text-[10px] font-black uppercase px-2.5 py-1.5 rounded-full">
                     Save 13%
@@ -212,7 +260,7 @@ const ProductDetail = () => {
                         ${i === 1 ? "border-[#FFB700]" : "border-gray-100 hover:border-[#FFB700]/50"}`}
                     >
                       <img
-                        src={product.image}
+                        src={getImageUrl(product.product_image)}
                         alt=""
                         className="w-full h-full object-contain bg-[#F5F5F5] p-1"
                       />
@@ -230,8 +278,8 @@ const ProductDetail = () => {
                 <div className="flex items-center gap-2">
                   {[
                     { icon: <Facebook size={13} />, bg: "bg-blue-600" },
-                    { icon: <Twitter  size={13} />, bg: "bg-sky-500"  },
-                    { icon: <Mail     size={13} />, bg: "bg-gray-500" },
+                    { icon: <Twitter size={13} />, bg: "bg-sky-500" },
+                    { icon: <Mail size={13} />, bg: "bg-gray-500" },
                   ].map((s, i) => (
                     <button key={i} className={`${s.bg} text-white p-2 rounded-lg`}>{s.icon}</button>
                   ))}
@@ -258,7 +306,7 @@ const ProductDetail = () => {
 
               {/* Name */}
               <h1 className="text-[#1C1C1E] font-black text-2xl md:text-3xl leading-tight">
-                {product.name.split(" ").map((word: string, i: number) =>
+                {product.product_name.split(" ").map((word: string, i: number) =>
                   i === 0
                     ? <span key={i} className="text-[#FFB700]">{word} </span>
                     : <span key={i}>{word} </span>
@@ -286,10 +334,10 @@ const ProductDetail = () => {
                     Starting Price
                   </span>
                   <span className="text-[#FFB700] font-black text-4xl leading-none">
-                    {formatPrice(product.price)}
+                    {formatPrice(Number(product.price))}
                   </span>
                   <span className="text-gray-500 text-xs line-through mt-0.5">
-                    {formatPrice(Math.round(product.price * 1.15))}
+                    {formatPrice(Math.round(Number(product.price) * 1.15))}
                   </span>
                 </div>
                 <div className="flex flex-col items-end gap-2">
@@ -435,10 +483,10 @@ const ProductDetail = () => {
                 {activeTab === "features" && (
                   <div className="flex flex-col gap-3">
                     {[
-                      { icon: <Layers size={16} />,     title: "Modular Design",       desc: "Easy to assemble, disassemble and maintain in field conditions." },
-                      { icon: <Award size={16} />,      title: "ISO 9001 Certified",   desc: "Manufactured under strict quality management systems."           },
-                      { icon: <ShieldCheck size={16} />, title: "Corrosion Resistant", desc: "Premium grade materials for long-term durability."               },
-                      { icon: <Zap size={16} />,        title: "Energy Efficient",     desc: "Optimized design for low power consumption."                     },
+                      { icon: <Layers size={16} />, title: "Modular Design", desc: "Easy to assemble, disassemble and maintain in field conditions." },
+                      { icon: <Award size={16} />, title: "ISO 9001 Certified", desc: "Manufactured under strict quality management systems." },
+                      { icon: <ShieldCheck size={16} />, title: "Corrosion Resistant", desc: "Premium grade materials for long-term durability." },
+                      { icon: <Zap size={16} />, title: "Energy Efficient", desc: "Optimized design for low power consumption." },
                     ].map((f) => (
                       <div key={f.title} className="flex items-start gap-3 p-3 bg-[#F5F5F5] rounded-xl hover:bg-[#FFB700]/5 transition-colors">
                         <div className="w-8 h-8 bg-[#FFB700]/10 border border-[#FFB700]/20 rounded-lg flex items-center justify-center flex-shrink-0 text-[#FFB700]">
@@ -456,10 +504,10 @@ const ProductDetail = () => {
                 {activeTab === "shipping" && (
                   <div className="flex flex-col gap-3">
                     {[
-                      { icon: <Truck size={16} />,     title: "Pan India Delivery", desc: "Ships to all major cities within 5-7 business days."    },
-                      { icon: <Package size={16} />,   title: "Safe Packaging",     desc: "Industrial-grade packaging to prevent transit damage."  },
-                      { icon: <RotateCcw size={16} />, title: "Custom Lead Time",   desc: "Custom orders take 15-20 business days for fabrication." },
-                      { icon: <Phone size={16} />,     title: "Live Tracking",      desc: "Get real-time shipment updates via SMS and email."      },
+                      { icon: <Truck size={16} />, title: "Pan India Delivery", desc: "Ships to all major cities within 5-7 business days." },
+                      { icon: <Package size={16} />, title: "Safe Packaging", desc: "Industrial-grade packaging to prevent transit damage." },
+                      { icon: <RotateCcw size={16} />, title: "Custom Lead Time", desc: "Custom orders take 15-20 business days for fabrication." },
+                      { icon: <Phone size={16} />, title: "Live Tracking", desc: "Get real-time shipment updates via SMS and email." },
                     ].map((f) => (
                       <div key={f.title} className="flex items-start gap-3 p-3 bg-[#F5F5F5] rounded-xl hover:bg-[#FFB700]/5 transition-colors">
                         <div className="w-8 h-8 bg-[#FFB700]/10 border border-[#FFB700]/20 rounded-lg flex items-center justify-center flex-shrink-0 text-[#FFB700]">
@@ -487,10 +535,10 @@ const ProductDetail = () => {
                 Why Choose Us
               </h3>
               {[
-                { icon: <ShieldCheck size={20} />, title: "Quality Assured",    desc: "ISO certified manufacturing"       },
-                { icon: <Truck       size={20} />, title: "Pan India Delivery", desc: "Fast dispatch & live tracking"     },
-                { icon: <RotateCcw   size={20} />, title: "Custom Build",       desc: "Tailored to your specifications"   },
-                { icon: <Phone       size={20} />, title: "24/7 Support",       desc: "Expert engineers on call"          },
+                { icon: <ShieldCheck size={20} />, title: "Quality Assured", desc: "ISO certified manufacturing" },
+                { icon: <Truck size={20} />, title: "Pan India Delivery", desc: "Fast dispatch & live tracking" },
+                { icon: <RotateCcw size={20} />, title: "Custom Build", desc: "Tailored to your specifications" },
+                { icon: <Phone size={20} />, title: "24/7 Support", desc: "Expert engineers on call" },
               ].map((b) => (
                 <div key={b.title} className="flex items-center gap-3 p-3 bg-[#F5F5F5] rounded-xl hover:bg-[#FFB700]/5 transition-colors group/item">
                   <div className="w-9 h-9 bg-white border border-gray-200 group-hover/item:border-[#FFB700]/30 group-hover/item:bg-[#FFB700]/10 rounded-xl flex items-center justify-center flex-shrink-0 text-[#FFB700] transition-all">
@@ -539,10 +587,10 @@ const ProductDetail = () => {
               </div>
               <div className="grid grid-cols-2 gap-2">
                 {[
-                  { label: "Dispatch",  val: "2-3 days"  },
-                  { label: "Delivery",  val: "5-7 days"  },
-                  { label: "Coverage",  val: "Pan India" },
-                  { label: "Insurance", val: "Included"  },
+                  { label: "Dispatch", val: "2-3 days" },
+                  { label: "Delivery", val: "5-7 days" },
+                  { label: "Coverage", val: "Pan India" },
+                  { label: "Insurance", val: "Included" },
                 ].map((d) => (
                   <div key={d.label} className="bg-[#F5F5F5] rounded-lg px-2.5 py-2">
                     <p className="text-[9px] font-black uppercase tracking-wide text-gray-400">{d.label}</p>
@@ -587,7 +635,7 @@ const ProductDetail = () => {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
-              {related.map((rel: Product) => (
+              {related.map((rel: ProductData) => (
                 <RelatedCard key={rel.id} rel={rel} navigate={navigate} />
               ))}
             </div>

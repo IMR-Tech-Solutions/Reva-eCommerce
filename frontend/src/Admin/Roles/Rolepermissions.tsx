@@ -49,7 +49,7 @@ const Rolepermissions = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
 
   // 🆕 Theme colors based on your CSS variables
-  const BRAND_COLOR = "#465fff"; // --color-brand-500
+  const BRAND_COLOR = "#FFB700"; // --color-brand-500
   const BLUE_LIGHT_COLOR = "#fdb022"; // --color-blue-light-500
 
   // Group permissions by module
@@ -391,11 +391,10 @@ const Rolepermissions = () => {
                                 key={item.method}
                                 className={`
                                 border rounded-lg px-3 py-1 transition-all duration-200 hover:shadow-md
-                                ${
-                                  selectedPermissions.includes(item.method)
+                                ${selectedPermissions.includes(item.method)
                                     ? "border-blue-300 bg-blue-50 dark:bg-blue-900/20"
                                     : "border-gray-200 dark:border-gray-600 hover:border-gray-300"
-                                }
+                                  }
                               `}
                               >
                                 <Checkbox

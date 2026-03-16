@@ -1,7 +1,12 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router";
-import { CATEGORIES } from "../data/categories";
+import { useSelector, useDispatch } from "react-redux";
+import { removeEcommerceTokens } from "../../authentication/auth";
+import { clearUser } from "../../redux/userSlice";
 import { useCart } from "../context/CartContext";
+import { ecommerceLinks } from "../ecommerceRoutes";
+import { toast } from "react-toastify";
+import { getpubliccategoriesservice } from "../../services/categoryservices";
 import {
   Menu, X, ShoppingCart, User, Search,
   MapPin, Phone, ChevronDown, Globe, ChevronRight,
@@ -16,6 +21,44 @@ const NAV_LINKS = [
   { label: "Contact Us", href: "/contact" },
 ];
 
+const ColoredAvatarIcon = ({ className = "w-5 h-5" }: { className?: string }) => (
+  <svg viewBox="0 0 128 128" className={className} xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <mask id="body-mask">
+        <rect width="128" height="128" fill="white" />
+        <circle cx="64" cy="40" r="42" fill="black" />
+      </mask>
+    </defs>
+    <g mask="url(#body-mask)">
+      <path d="M 64 70 C 114 70 124 95 124 128 L 64 128 Z" fill="#1D80F0" />
+      <path d="M 64 70 C 14 70 4 95 4 128 L 64 128 Z" fill="#5B9CF8" />
+    </g>
+    <path d="M 64 4 C 83.88 4 100 20.12 100 40 C 100 59.88 83.88 76 64 76 Z" fill="#F4A261" />
+    <path d="M 64 4 C 44.12 4 28 20.12 28 40 C 28 59.88 44.12 76 64 76 Z" fill="#FAC486" />
+  </svg>
+);
+
+const ProfileDropdownComponent = ({ isOpen, onClose, navigate, onLogout }: { isOpen: boolean, onClose: () => void, navigate: any, onLogout: () => void }) => {
+  if (!isOpen) return null;
+  return (
+    <div className="absolute top-[120%] right-0 mt-1 w-48 bg-white shadow-xl rounded-lg border border-gray-100 z-[100] transition-all duration-300 before:absolute before:-top-1.5 before:right-6 before:w-4 before:h-4 before:bg-white before:rotate-45 before:border-l before:border-t before:border-gray-100 cursor-default">
+      <div className="p-2 bg-white rounded-lg relative z-10 w-full shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] flex flex-col gap-1">
+        <button onClick={() => { onClose(); navigate(ecommerceLinks.UserProfile); }} className="w-full text-left px-4 py-2 text-sm font-bold text-gray-800 hover:bg-gray-100 transition-colors rounded">
+          My Profile
+        </button>
+        <button onClick={() => { onClose(); navigate("/account-orders"); }} className="w-full text-left px-4 py-2 text-sm font-bold text-gray-800 hover:bg-gray-100 transition-colors rounded">
+          My Orders
+        </button>
+        <div className="h-px bg-gray-100 my-0.5" />
+        <button onClick={() => { onClose(); onLogout(); }} className="w-full text-left px-4 py-2 text-sm font-bold text-red-600 hover:bg-red-50 transition-colors rounded">
+          Logout
+        </button>
+      </div>
+    </div>
+  );
+};
+
+
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -24,6 +67,29 @@ export default function Header() {
   const [categoryOpen, setCategoryOpen] = useState(false);
   const [scrolledCatOpen, setScrolledCatOpen] = useState(false);
   const [mobileCatOpen, setMobileCatOpen] = useState(false);
+  const [categories, setCategories] = useState<any[]>([]);
+
+  const dispatch = useDispatch();
+  const { user, isAuthenticated } = useSelector((state: any) => state.user);
+  const [profileOpen, setProfileOpen] = useState(false);
+  const [scrolledProfileOpen, setScrolledProfileOpen] = useState(false);
+  const profileDropdownRef = useRef<HTMLDivElement>(null);
+  const scrolledProfileDropdownRef = useRef<HTMLDivElement>(null);
+  const mobileProfileDropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    let isMounted = true;
+    const fetchCats = async () => {
+      try {
+        const data = await getpubliccategoriesservice();
+        if (isMounted) setCategories(data);
+      } catch (error) {
+        console.error("Failed to load categories header", error);
+      }
+    };
+    fetchCats();
+    return () => { isMounted = false; };
+  }, []);
 
   const categoryDropdownRef = useRef<HTMLDivElement>(null);
   const scrolledCategoryDropdownRef = useRef<HTMLDivElement>(null);
@@ -42,10 +108,21 @@ export default function Header() {
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (categoryDropdownRef.current && !categoryDropdownRef.current.contains(e.target as Node))
+      const target = e.target as Node;
+      if (categoryDropdownRef.current && !categoryDropdownRef.current.contains(target))
         setCategoryOpen(false);
-      if (scrolledCategoryDropdownRef.current && !scrolledCategoryDropdownRef.current.contains(e.target as Node))
+      if (scrolledCategoryDropdownRef.current && !scrolledCategoryDropdownRef.current.contains(target))
         setScrolledCatOpen(false);
+
+      // Improved profile dropdown handling
+      const insideProfile = profileDropdownRef.current?.contains(target) ||
+        scrolledProfileDropdownRef.current?.contains(target) ||
+        mobileProfileDropdownRef.current?.contains(target);
+
+      if (!insideProfile) {
+        setProfileOpen(false);
+        setScrolledProfileOpen(false);
+      }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
@@ -57,6 +134,15 @@ export default function Header() {
     setScrolledCatOpen(false);
     setMobileCatOpen(false);
     setMenuOpen(false);
+  };
+
+  const handleLogout = () => {
+    removeEcommerceTokens();
+    dispatch(clearUser());
+    toast.success("Logout successfully");
+    setProfileOpen(false);
+    setScrolledProfileOpen(false);
+    navigate("/");
   };
 
   // Cart Dropdown Component
@@ -74,7 +160,7 @@ export default function Header() {
         ) : (
           <>
             <div className="max-h-60 overflow-y-auto pr-1 flex flex-col gap-3">
-              {cart.map((item) => (
+              {cart.map((item: any) => (
                 <div key={item.product.id} className="flex gap-3 items-center">
                   <img
                     src={item.product.image}
@@ -96,7 +182,7 @@ export default function Header() {
               <div className="flex justify-between items-center mb-2">
                 <span className="text-sm font-medium text-gray-500">Subtotal:</span>
                 <span className="text-sm font-bold text-[#1C1C1E]">
-                  ₹{cart.reduce((total, item) => total + item.product.price * item.qty, 0).toLocaleString()}
+                  ₹{cart.reduce((total: number, item: any) => total + item.product.price * item.qty, 0).toLocaleString()}
                 </span>
               </div>
               <a
@@ -123,13 +209,13 @@ export default function Header() {
   // Shared category dropdown list
   const CategoryList = ({ onClose }: { onClose: () => void }) => (
     <div className="absolute top-full left-0 bg-white shadow-xl rounded-lg mt-2 w-56 z-[100] border border-gray-100 max-h-80 overflow-y-auto">
-      {CATEGORIES.map((cat) => (
+      {categories.map((cat) => (
         <button
-          key={cat.slug}
+          key={cat.slug || cat.id}
           onClick={() => { handleCategoryClick(cat.slug); onClose(); }}
           className="block w-full text-left px-4 py-2.5 text-sm hover:bg-gray-100 hover:text-[#FFB700] transition-colors"
         >
-          {cat.name}
+          {cat.category_name}
         </button>
       ))}
     </div>
@@ -230,10 +316,22 @@ export default function Header() {
 
             {/* Right icons */}
             <div className="flex items-center gap-1">
-              <a href="/account" className="flex items-center gap-1.5 px-3 py-2 text-sm font-bold text-[#1C1C1E] hover:text-white hover:bg-[#CC9200] rounded transition-colors">
-                <User size={16} />
-                <span className="hidden lg:inline">Account</span>
-              </a>
+              <div className="relative" ref={profileDropdownRef}>
+                {isAuthenticated ? (
+                  <>
+                    <button onClick={() => setProfileOpen(!profileOpen)} className="flex items-center gap-1.5 px-3 py-2 text-sm font-bold text-[#1C1C1E] hover:text-white hover:bg-[#CC9200] rounded transition-colors">
+                      <ColoredAvatarIcon className="w-5 h-5" />
+                      <span className="hidden lg:inline">{user?.first_name || "User"}</span>
+                    </button>
+                    <ProfileDropdownComponent isOpen={profileOpen} onClose={() => setProfileOpen(false)} navigate={navigate} onLogout={handleLogout} />
+                  </>
+                ) : (
+                  <a href="/account" className="flex items-center gap-1.5 px-3 py-2 text-sm font-bold text-[#1C1C1E] hover:text-white hover:bg-[#CC9200] rounded transition-colors">
+                    <User size={16} />
+                    <span className="hidden lg:inline">Account</span>
+                  </a>
+                )}
+              </div>
               <div className="relative group">
                 <a href="/cart" className="flex items-center gap-1.5 px-3 py-2 text-sm font-bold text-[#1C1C1E] hover:text-white hover:bg-[#CC9200] rounded transition-colors">
                   <ShoppingCart size={16} />
@@ -298,10 +396,22 @@ export default function Header() {
 
           {/* Account + Cart */}
           <div className="flex items-center gap-1 flex-shrink-0 ml-auto">
-            <a href="/account" className="flex items-center gap-1.5 px-3 py-2 text-sm font-bold text-[#1C1C1E] hover:text-white hover:bg-[#CC9200] rounded transition-colors whitespace-nowrap">
-              <User size={16} />
-              <span>My Account</span>
-            </a>
+            <div className="relative flex-shrink-0" ref={scrolledProfileDropdownRef}>
+              {isAuthenticated ? (
+                <>
+                  <button onClick={() => setScrolledProfileOpen(!scrolledProfileOpen)} className="flex items-center gap-1.5 px-3 py-2 text-sm font-bold text-[#1C1C1E] hover:text-white hover:bg-[#CC9200] rounded transition-colors whitespace-nowrap">
+                    <ColoredAvatarIcon className="w-5 h-5" />
+                    <span className="hidden lg:inline">{user?.first_name || "User"}</span>
+                  </button>
+                  <ProfileDropdownComponent isOpen={scrolledProfileOpen} onClose={() => setScrolledProfileOpen(false)} navigate={navigate} onLogout={handleLogout} />
+                </>
+              ) : (
+                <a href="/user-shop-profile" className="flex items-center gap-1.5 px-3 py-2 text-sm font-bold text-[#1C1C1E] hover:text-white hover:bg-[#CC9200] rounded transition-colors whitespace-nowrap">
+                  <User size={16} />
+                  <span>My Account</span>
+                </a>
+              )}
+            </div>
             <div className="relative group">
               <a href="/cart" className="flex items-center gap-1.5 px-3 py-2 text-sm font-bold text-[#1C1C1E] hover:text-white hover:bg-[#CC9200] rounded transition-colors whitespace-nowrap">
                 <ShoppingCart size={16} />
@@ -329,6 +439,27 @@ export default function Header() {
           >
             <Search size={20} />
           </button>
+
+          {/* Mobile Profile / Account */}
+          <div className="relative" ref={mobileProfileDropdownRef}>
+            {isAuthenticated ? (
+              <>
+                <button
+                  onClick={() => setProfileOpen(!profileOpen)}
+                  className="p-2 rounded hover:bg-[#CC9200] transition-colors text-[#1C1C1E] flex items-center"
+                >
+                  <ColoredAvatarIcon className="w-6 h-6" />
+                </button>
+                {/* Reusing the desktop dropdown component for mobile */}
+                <ProfileDropdownComponent isOpen={profileOpen} onClose={() => setProfileOpen(false)} navigate={navigate} onLogout={handleLogout} />
+              </>
+            ) : (
+              <a href="/user-shop-profile" className="p-2 rounded hover:bg-[#CC9200] transition-colors text-[#1C1C1E] flex items-center">
+                <User size={20} />
+              </a>
+            )}
+          </div>
+
           <a href="/cart" className="relative p-2 rounded hover:bg-[#CC9200] transition-colors text-[#1C1C1E]">
             <ShoppingCart size={20} />
             {cartCount > 0 && (
@@ -401,10 +532,10 @@ export default function Header() {
             </button>
             {mobileCatOpen && (
               <div className="mt-2 bg-[#1C1C1E] border border-[#2C2C2E] rounded-lg max-h-72 overflow-y-auto">
-                {CATEGORIES.map((cat) => (
-                  <button key={cat.slug} onClick={() => handleCategoryClick(cat.slug)}
+                {categories.map((cat) => (
+                  <button key={cat.slug || cat.id} onClick={() => handleCategoryClick(cat.slug)}
                     className="w-full text-left px-4 py-2.5 text-sm text-gray-200 hover:bg-[#2C2C2E] hover:text-[#FFB700] transition-colors">
-                    {cat.name}
+                    {cat.category_name}
                   </button>
                 ))}
               </div>

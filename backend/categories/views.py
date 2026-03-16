@@ -1,5 +1,5 @@
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework import status
 from .models import Category
@@ -153,3 +153,14 @@ class CategoriesForShopOwners(APIView):
         result_page = paginator.paginate_queryset(categories, request)
         serializer = CategorySerializer(result_page, many=True)
         return paginator.get_paginated_response(serializer.data)
+
+
+# ==============================
+# PUBLIC API (No Auth - for ecommerce storefront)
+# ==============================
+class PublicCategoriesView(APIView):
+    permission_classes = [AllowAny]
+    def get(self, request):
+        categories = Category.objects.all().order_by('category_name')
+        serializer = CategorySerializer(categories, many=True)
+        return Response(serializer.data)

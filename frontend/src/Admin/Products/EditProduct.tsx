@@ -55,8 +55,15 @@ const Editproduct = ({
         unit: selectedProduct.unit,
         low_stock_threshold: selectedProduct.low_stock_threshold,
         is_active: selectedProduct.is_active,
+        is_live: selectedProduct.is_live,
         category: selectedProduct.category,
         sku_code: selectedProduct.sku_code,
+        material: selectedProduct.material,
+        capacity: selectedProduct.capacity,
+        pressure: selectedProduct.pressure,
+        flow_rate: selectedProduct.flow_rate,
+        motor_hp: selectedProduct.motor_hp,
+        price: selectedProduct.price,
       });
     }
   }, [selectedProduct, visible, form]);
@@ -155,7 +162,50 @@ const Editproduct = ({
           <Input />
         </Form.Item>
 
+        <Row gutter={10}>
+          <Col span={12}>
+            <Form.Item label="Price (₹)" name="price">
+              <InputNumber style={{ width: "100%" }} min={0} step={0.01} />
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+            <Form.Item label="Material" name="material">
+              <Input placeholder="e.g., SS316, MS" />
+            </Form.Item>
+          </Col>
+        </Row>
+
+        <Row gutter={10}>
+          <Col span={12}>
+            <Form.Item label="Capacity" name="capacity">
+              <Input placeholder="e.g., 1000L, 500kg" />
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+            <Form.Item label="Pressure" name="pressure">
+              <Input placeholder="e.g., High Pressure" />
+            </Form.Item>
+          </Col>
+        </Row>
+
+        <Row gutter={10}>
+          <Col span={12}>
+            <Form.Item label="Flow Rate" name="flow_rate">
+              <Input placeholder="e.g., 50m³/hr" />
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+            <Form.Item label="Motor HP" name="motor_hp">
+              <Input placeholder="e.g., 10HP" />
+            </Form.Item>
+          </Col>
+        </Row>
+
         <Form.Item label="Active" name="is_active" valuePropName="checked">
+          <Switch />
+        </Form.Item>
+
+        <Form.Item label="Live on Ecommerce" name="is_live" valuePropName="checked">
           <Switch />
         </Form.Item>
 

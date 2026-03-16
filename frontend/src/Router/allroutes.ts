@@ -1,6 +1,6 @@
 export const all_routes = {
-  signIn: "/signin",
-  signUp: "/signup",
+  signIn: "/admin/login",
+  signUp: "/admin/signup",
   home: "/dashboard",
   orders: "/orders",
   shoporders: "/shop-orders",

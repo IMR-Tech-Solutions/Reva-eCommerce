@@ -23,6 +23,13 @@ const AddProducts = () => {
     low_stock_threshold: "10",
     is_live: false,
     is_active: true,
+    // Equipment specification fields
+    material: "",
+    capacity: "",
+    pressure: "",
+    flow_rate: "",
+    motor_hp: "",
+    price: "",
   });
   const [productImage, setProductImage] = useState<File | null>(null);
   const [categories, setCategories] = useState<CategoryData[]>([]);
@@ -110,6 +117,12 @@ const AddProducts = () => {
         low_stock_threshold: "10",
         is_live: false,
         is_active: true,
+        material: "",
+        capacity: "",
+        pressure: "",
+        flow_rate: "",
+        motor_hp: "",
+        price: "",
       });
       setProductImage(null);
 
@@ -211,6 +224,83 @@ const AddProducts = () => {
             </div>
 
             <div>
+              <Label>Price (₹)</Label>
+              <input
+                type="number"
+                name="price"
+                value={productData.price}
+                onChange={handleChange}
+                className="input-field"
+                min="0"
+                step="0.01"
+                placeholder="Enter price"
+              />
+            </div>
+          </div>
+
+          {/* Equipment Specifications */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-3">
+            <div>
+              <Label>Material</Label>
+              <input
+                type="text"
+                name="material"
+                value={productData.material}
+                onChange={handleChange}
+                className="input-field"
+                maxLength={100}
+                placeholder="e.g., SS316, MS, SS304"
+              />
+            </div>
+            <div>
+              <Label>Capacity</Label>
+              <input
+                type="text"
+                name="capacity"
+                value={productData.capacity}
+                onChange={handleChange}
+                className="input-field"
+                maxLength={100}
+                placeholder="e.g., 1000L, 500kg"
+              />
+            </div>
+            <div>
+              <Label>Pressure</Label>
+              <input
+                type="text"
+                name="pressure"
+                value={productData.pressure}
+                onChange={handleChange}
+                className="input-field"
+                maxLength={100}
+                placeholder="e.g., High Pressure, 8 Bar"
+              />
+            </div>
+            <div>
+              <Label>Flow Rate</Label>
+              <input
+                type="text"
+                name="flow_rate"
+                value={productData.flow_rate}
+                onChange={handleChange}
+                className="input-field"
+                maxLength={100}
+                placeholder="e.g., 50m³/hr, 1000LPM"
+              />
+            </div>
+            <div>
+              <Label>Motor HP</Label>
+              <input
+                type="text"
+                name="motor_hp"
+                value={productData.motor_hp}
+                onChange={handleChange}
+                className="input-field"
+                maxLength={100}
+                placeholder="e.g., 10HP, 25HP"
+              />
+            </div>
+            <div>
               <Label>Product Image</Label>
               <FileInput
                 onChange={handleFileChange}
@@ -249,6 +339,19 @@ const AddProducts = () => {
               />
               <Label htmlFor="is_active" className="mb-0">
                 Product is Active
+              </Label>
+            </div>
+            <div className="flex items-center">
+              <input
+                type="checkbox"
+                id="is_live"
+                name="is_live"
+                checked={productData.is_live}
+                onChange={handleChange}
+                className="mr-2 h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
+              />
+              <Label htmlFor="is_live" className="mb-0">
+                Live on Ecommerce Store
               </Label>
             </div>
           </div>

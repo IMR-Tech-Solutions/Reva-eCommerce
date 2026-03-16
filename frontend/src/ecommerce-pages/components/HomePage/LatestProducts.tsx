@@ -1,16 +1,16 @@
 import { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight, ShoppingCart, Star } from "lucide-react";
+import { getpublicproductsservice } from "../../../services/productservices";
+import { ProductData } from "../../../types/types";
+import { handleError } from "../../../utils/handleError";
 
-// ── Types ──
-type Product = {
-  id: number;
-  name: string;
-  image: string;
-  rating: number;
-  reviewCount: number;
-  price: number;
-  originalPrice?: number;
-  badge?: string;
+// Utility to handle backend image URLs
+const getImageUrl = (imagePath: string) => {
+  if (!imagePath) return "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&q=80";
+  if (imagePath.startsWith("http")) return imagePath;
+  const baseUrl = import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000/api/";
+  const domain = baseUrl.replace("/api/", "");
+  return `${domain}${imagePath}`;
 };
 
 // ── Responsive Visible Count Hook ──
@@ -32,81 +32,7 @@ const useVisibleCount = (): number => {
   return visibleCount;
 };
 
-// ── Data ──
-const products: Product[] = [
-  {
-    id: 1,
-    name: "DEWALT FlexVolt 60V Max 2.5 Gallon Cordless Air",
-    image: "/ecommerce-images/product1.jpg",
-    rating: 0,
-    reviewCount: 0,
-    price: 299.00,
-  },
-  {
-    id: 2,
-    name: "DEWALT 1.6 HP, 15 Gallon, Portable",
-    image: "/ecommerce-images/product2.jpg",
-    rating: 4,
-    reviewCount: 1,
-    price: 429.00,
-    originalPrice: 684.28,
-    badge: "SALE",
-  },
-  {
-    id: 3,
-    name: "Rol-Air 6-1/2 HP Belt Drive Twin Tank Gas-",
-    image: "/ecommerce-images/product3.jpg",
-    rating: 0,
-    reviewCount: 0,
-    price: 1260.00,
-  },
-  {
-    id: 4,
-    name: "Rol-Air 2.5 HP (115V) 6.5 CFM@90PSI, 5.3 Gallon",
-    image: "/ecommerce-images/product4.jpg",
-    rating: 0,
-    reviewCount: 0,
-    price: 419.00,
-    originalPrice: 592.08,
-    badge: "SALE",
-  },
-  {
-    id: 5,
-    name: "Hitachi / Metabo 5.5 HP 8-Gallon Gas Powered",
-    image: "/ecommerce-images/product5.jpg",
-    rating: 0,
-    reviewCount: 0,
-    price: 1199.00,
-  },
-  {
-    id: 6,
-    name: "Makita 3.0 HP 6 Gallon Oil-Free Electric Air",
-    image: "/ecommerce-images/product6.jpg",
-    rating: 3,
-    reviewCount: 5,
-    price: 349.00,
-    originalPrice: 499.00,
-    badge: "SALE",
-  },
-  {
-    id: 7,
-    name: "Bosch 4.5 Gallon Portable Quiet Air Compressor",
-    image: "/ecommerce-images/product7.jpg",
-    rating: 5,
-    reviewCount: 12,
-    price: 189.00,
-  },
-  {
-    id: 8,
-    name: "Milwaukee M18 Fuel 2 Gallon Compact Quiet",
-    image: "/ecommerce-images/product8.jpg",
-    rating: 4,
-    reviewCount: 8,
-    price: 379.00,
-    originalPrice: 449.00,
-    badge: "NEW",
-  },
-];
+// No static data needed here anymore
 
 // ── Star Rating ──
 const StarRating = ({ rating }: { rating: number }) => (
@@ -129,6 +55,22 @@ const StarRating = ({ rating }: { rating: number }) => (
 const LatestProducts = () => {
   const visibleCount = useVisibleCount();
   const [startIndex, setStartIndex] = useState<number>(0);
+  const [products, setProducts] = useState<ProductData[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchLatest = async () => {
+      try {
+        const data = await getpublicproductsservice();
+        setProducts(data.slice(-8)); // Get the latest 8 products
+      } catch (err) {
+        handleError(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchLatest();
+  }, []);
 
   // Reset startIndex when visibleCount changes (resize)
   useEffect(() => {
@@ -143,11 +85,14 @@ const LatestProducts = () => {
 
   const visibleProducts = products.slice(startIndex, startIndex + visibleCount);
 
+  if (loading) return null;
+  if (products.length === 0) return null;
+
   // Dynamic grid class
   const gridCols =
     visibleCount === 4 ? "grid-cols-4" :
-    visibleCount === 3 ? "grid-cols-3" :
-    "grid-cols-2";
+      visibleCount === 3 ? "grid-cols-3" :
+        "grid-cols-2";
 
   return (
     <section className="bg-[#F5F5F5] py-10 px-4">
@@ -189,27 +134,19 @@ const LatestProducts = () => {
 
           {/* ── Product Cards Grid ── */}
           <div className={`grid ${gridCols} gap-0 border-t border-l border-gray-200`}>
-            {visibleProducts.map((product: Product) => (
+            {visibleProducts.map((product: ProductData) => (
               <div
                 key={product.id}
                 className="relative flex flex-col border-b border-r border-gray-200 bg-white hover:z-10 hover:shadow-xl transition-shadow duration-200 group"
               >
                 {/* Badge */}
-                {product.badge && (
-                  <span className={`absolute top-3 left-3 z-10 text-[11px] font-black uppercase px-2.5 py-1 rounded-sm
-                    ${product.badge === "SALE"
-                      ? "bg-[#FFB700] text-[#1C1C1E]"
-                      : "bg-green-500 text-white"
-                    }`}>
-                    {product.badge}
-                  </span>
-                )}
+                {/* No badge for now */}
 
                 {/* Image */}
                 <div className="w-full h-56 flex items-center justify-center p-6 bg-white overflow-hidden">
                   <img
-                    src={product.image}
-                    alt={product.name}
+                    src={getImageUrl(product.product_image)}
+                    alt={product.product_name}
                     className="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform duration-300"
                   />
                 </div>
@@ -222,21 +159,16 @@ const LatestProducts = () => {
 
                   {/* Name */}
                   <p className="text-[#1C1C1E] text-sm font-semibold leading-snug line-clamp-2 min-h-[40px]">
-                    {product.name}
+                    {product.product_name}
                   </p>
 
                   {/* Stars */}
-                  <StarRating rating={product.rating} />
+                  <StarRating rating={4} />
 
                   {/* Price */}
                   <div className="flex flex-col gap-0.5 mt-1">
-                    {product.originalPrice && (
-                      <span className="text-gray-400 text-sm line-through">
-                        £{product.originalPrice.toFixed(2)}
-                      </span>
-                    )}
                     <span className="text-[#FFB700] font-black text-xl leading-tight">
-                      £{product.price.toFixed(2)}
+                      ₹{Number(product.price).toLocaleString("en-IN")}
                     </span>
                   </div>
 
@@ -252,17 +184,16 @@ const LatestProducts = () => {
 
           {/* ── Dot Indicators ── */}
           <div className="flex items-center justify-center gap-2 mt-5">
-            {products.map((_: Product, index: number) => {
+            {products.map((_: ProductData, index: number) => {
               const maxStart = products.length - visibleCount;
               return (
                 <button
                   key={index}
                   onClick={() => setStartIndex(Math.min(index, maxStart))}
-                  className={`rounded-full transition-all duration-300 ${
-                    index >= startIndex && index < startIndex + visibleCount
-                      ? "w-5 h-2 bg-[#FFB700]"
-                      : "w-2 h-2 bg-gray-300 hover:bg-gray-400"
-                  }`}
+                  className={`rounded-full transition-all duration-300 ${index >= startIndex && index < startIndex + visibleCount
+                    ? "w-5 h-2 bg-[#FFB700]"
+                    : "w-2 h-2 bg-gray-300 hover:bg-gray-400"
+                    }`}
                   aria-label={`Go to product ${index + 1}`}
                 />
               );

@@ -360,7 +360,7 @@ const ShopOwnerOrderStatus = () => {
         </div>
 
         {orderData?.order_status === "delivery_in_progress" && (
-          <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-700">
+          <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-[#FFB700]">
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-lg font-semibold text-blue-800 dark:text-blue-200">
@@ -374,7 +374,7 @@ const ShopOwnerOrderStatus = () => {
               <button
                 onClick={handleConfirmDelivery}
                 disabled={confirmLoading}
-                className="px-6 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white rounded-lg font-medium transition-colors"
+                className="px-6 py-2 bg-blue-600 hover:bg-[#FFB700] disabled:bg-blue-400 text-white rounded-lg font-medium transition-colors"
               >
                 {confirmLoading ? "Confirming..." : "Confirm Delivery"}
               </button>

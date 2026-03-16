@@ -1,58 +1,100 @@
 import { getAllPaginatedData } from "./getpaginateddata";
 import api from "./baseapi";
 
-// Get all products -- admin only
+
+// ==============================
+// Get all products -- Admin
+// ==============================
 export const getallproductservice = () => {
-  const allProducts = getAllPaginatedData("admin/all-products/");
-  return allProducts;
+  return getAllPaginatedData("admin/all-products/");
 };
 
 
-// Get all products which have stocks -----
+// ==============================
+// Get all products which have stocks
+// ==============================
 export const stockaddedbyuserservice = () => {
-  const stockedProduct = getAllPaginatedData("user/stock/products/");
-  return stockedProduct;
+  return getAllPaginatedData("user/stock/products/");
 };
 
-// Get particular user's products -- admin only
+
+// ==============================
+// Get particular user's products -- Admin
+// ==============================
 export const getalluserproductsservice = (userID: number) => {
-  const allUserProducts = getAllPaginatedData(`admin/user-products/${userID}/`);
-  return allUserProducts;
+  return getAllPaginatedData(`admin/user-products/${userID}/`);
 };
 
-// Add product
+
+// ==============================
+// Add Product
+// ==============================
 export const addproductservice = async (productData: FormData) => {
-  await api.post("add-product/", productData);
+  const response = await api.post("add-product/", productData);
+  return response.data;
 };
 
+
+// ==============================
 // Get current user's products
+// ==============================
 export const getmyproductservice = () => {
-  const myProducts = getAllPaginatedData("my-products/");
-  return myProducts;
+  return getAllPaginatedData("my-products/");
 };
 
-//get current user's active products
+
+// ==============================
+// Get current user's active products
+// ==============================
 export const getmyactiveproductservice = () => {
-  const myActiveProducts = getAllPaginatedData("active/my-products/");
-  return myActiveProducts;
+  return getAllPaginatedData("active/my-products/");
 };
 
+
+// ==============================
 // Delete product
+// ==============================
 export const deleteproductservice = async (productID: number) => {
-  await api.delete(`delete-product/${productID}/`);
+  const response = await api.delete(`delete-product/${productID}/`);
+  return response.data;
 };
 
+
+// ==============================
 // Get single product details
+// ==============================
 export const getsingleproductservice = async (productID: number) => {
   const response = await api.get(`product/${productID}/`);
   return response.data;
 };
 
+
+// ==============================
 // Update product
+// ==============================
 export const updateproductservice = async (
   productID: number,
   updatedData: FormData
 ) => {
-  await api.put(`update-product/${productID}/`, updatedData);
+  const response = await api.put(`update-product/${productID}/`, updatedData);
+  return response.data;
 };
 
+
+// ==============================
+// Shop Products (for ecommerce pages)
+// ==============================
+export const getshopproductsservice = () => {
+  return getAllPaginatedData("shop/products/");
+};
+
+// ==============================
+// PUBLIC API (for ecommerce storefront)
+// ==============================
+export const getpublicproductsservice = () => {
+  return getAllPaginatedData("public/products/");
+};
+
+export const getpublicproductsbycategoryservice = (slug: string) => {
+  return getAllPaginatedData(`public/products/category/${slug}/`);
+};

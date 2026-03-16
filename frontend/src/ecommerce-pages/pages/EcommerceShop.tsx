@@ -1,8 +1,9 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useNavigate } from "react-router";
-import { products, Product } from "../data/products";
+import { Product } from "../data/products";
 import { useCart } from "../context/CartContext";
 import { toast } from "react-toastify";
+import { getpublicproductsservice } from "../../services/productservices";
 import {
   ChevronDown,
   ChevronUp,
@@ -270,8 +271,50 @@ const ProductCard = ({
 };
 
 const EcommerceShop = () => {
-  const allProducts = products;
+  const [allProducts, setAllProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    let isMounted = true;
+    const fetchProducts = async () => {
+      try {
+        setLoading(true);
+        const data = await getpublicproductsservice();
+        if (isMounted) {
+          const mappedProducts: Product[] = data.map((item: any) => ({
+            id: item.id,
+            name: item.product_name,
+            category: item.category_slug || item.category_name || "Uncategorized",
+            material: item.material || "",
+            capacity: item.capacity,
+            pressure: item.pressure,
+            flowRate: item.flow_rate,
+            motorHP: item.motor_hp,
+            price: Number(item.price) || 0,
+            image: item.product_image
+              ? `${import.meta.env.VITE_API_IMG_URL ?? ""}${item.product_image}`
+              : "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&q=80", // fallback
+          }));
+          setAllProducts(mappedProducts);
+          if (mappedProducts.length > 0) {
+            setPrice(Math.max(...mappedProducts.map((p) => p.price)));
+          }
+        }
+      } catch (error) {
+        if (isMounted) {
+          console.error("Error fetching products", error);
+          toast.error("Failed to load products");
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
+    fetchProducts();
+    return () => { isMounted = false; };
+  }, []);
 
   const priceRange = useMemo(() => getPriceRange(allProducts), [allProducts]);
   const materials = useMemo(() => uniqueValues(allProducts, "material"), [allProducts]);
@@ -286,9 +329,7 @@ const EcommerceShop = () => {
   const [selectedPressure, setSelectedPressure] = useState<string | null>(null);
   const [selectedFlowRate, setSelectedFlowRate] = useState<string | null>(null);
   const [selectedMotorHP, setSelectedMotorHP] = useState<string | null>(null);
-  const [price, setPrice] = useState<number>(
-    () => Math.max(...products.map((p) => p.price))
-  );
+  const [price, setPrice] = useState<number>(1000000);
   const [sort, setSort] = useState<SortOption>("default");
   const [currentPage, setCurrentPage] = useState(1);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
@@ -353,7 +394,7 @@ const EcommerceShop = () => {
     setSelectedPressure(null);
     setSelectedFlowRate(null);
     setSelectedMotorHP(null);
-    setPrice(Math.max(...products.map((p) => p.price)));
+    setPrice(Math.max(...allProducts.map((p) => p.price), 0));
     setSearchTerm("");
     setCurrentPage(1);
   };
@@ -616,31 +657,13 @@ const EcommerceShop = () => {
           </div>
 
           {/* ── PRODUCT GRID ── */}
-          <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
-
-            {filteredProducts.length > 0 && (
-              <div className="flex items-center justify-between mb-5">
-                <p className="text-xs text-gray-500">
-                  Showing{" "}
-                  <span className="font-bold text-[#1C1C1E]">{startIndex + 1}</span>
-                  {" – "}
-                  <span className="font-bold text-[#1C1C1E]">
-                    {Math.min(startIndex + PRODUCTS_PER_PAGE, filteredProducts.length)}
-                  </span>
-                  {" of "}
-                  <span className="font-bold text-[#1C1C1E]">{filteredProducts.length}</span>
-                  {" products"}
-                </p>
-                <p className="text-xs text-gray-400">
-                  Page{" "}
-                  <span className="font-bold text-[#1C1C1E]">{safePage}</span>
-                  {" of "}
-                  <span className="font-bold text-[#1C1C1E]">{totalPages}</span>
-                </p>
+          <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm min-h-[400px]">
+            {loading ? (
+              <div className="flex flex-col items-center justify-center h-full py-20 gap-4">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#FFB700]"></div>
+                <p className="text-gray-500 font-medium animate-pulse">Loading industrial equipment...</p>
               </div>
-            )}
-
-            {filteredProducts.length === 0 ? (
+            ) : filteredProducts.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-20 gap-4">
                 <div className="w-16 h-16 bg-[#F5F5F5] rounded-full flex items-center justify-center">
                   <Package size={32} className="text-gray-300" />
@@ -660,6 +683,26 @@ const EcommerceShop = () => {
               </div>
             ) : (
               <>
+                <div className="flex items-center justify-between mb-5">
+                  <p className="text-xs text-gray-500">
+                    Showing{" "}
+                    <span className="font-bold text-[#1C1C1E]">{startIndex + 1}</span>
+                    {" – "}
+                    <span className="font-bold text-[#1C1C1E]">
+                      {Math.min(startIndex + PRODUCTS_PER_PAGE, filteredProducts.length)}
+                    </span>
+                    {" of "}
+                    <span className="font-bold text-[#1C1C1E]">{filteredProducts.length}</span>
+                    {" products"}
+                  </p>
+                  <p className="text-xs text-gray-400">
+                    Page{" "}
+                    <span className="font-bold text-[#1C1C1E]">{safePage}</span>
+                    {" of "}
+                    <span className="font-bold text-[#1C1C1E]">{totalPages}</span>
+                  </p>
+                </div>
+
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                   {pagedProducts.map((product) => (
                     <ProductCard

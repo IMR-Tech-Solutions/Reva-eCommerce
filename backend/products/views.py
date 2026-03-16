@@ -1,12 +1,12 @@
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework import status
 from django.shortcuts import get_object_or_404
 from rest_framework.pagination import PageNumberPagination
 from .models import Product
 from categories.models import Category
-from .serializers import ProductSerializer,ProductWithActiveStockSerializer,ProductBulkSerializer
+from .serializers import ProductSerializer,ProductWithActiveStockSerializer,ProductBulkSerializer, PublicProductSerializer
 from accounts.premissions import IsAdminRole, IsOwnerOrAdmin, HasModuleAccess
 from django.db.models import Q
 
@@ -141,3 +141,33 @@ class ShopProductsView(APIView):
             context={'request': request} 
         )
         return paginator.get_paginated_response(serializer.data) 
+
+
+# ==============================
+# PUBLIC API VIEWS (No Auth - for ecommerce storefront)
+# ==============================
+
+# Public: All live products
+class PublicProductsView(APIView):
+    permission_classes = [AllowAny]
+    def get(self, request):
+        products = Product.objects.filter(is_live=True, is_active=True).order_by('product_name')
+        paginator = PageNumberPagination()
+        paginator.page_size = 100
+        result_page = paginator.paginate_queryset(products, request)
+        serializer = PublicProductSerializer(result_page, many=True, context={'request': request})
+        return paginator.get_paginated_response(serializer.data)
+
+# Public: Products by category slug
+class PublicProductsByCategoryView(APIView):
+    permission_classes = [AllowAny]
+    def get(self, request, slug):
+        category = get_object_or_404(Category, slug=slug)
+        products = Product.objects.filter(
+            category=category, is_live=True, is_active=True
+        ).order_by('product_name')
+        paginator = PageNumberPagination()
+        paginator.page_size = 100
+        result_page = paginator.paginate_queryset(products, request)
+        serializer = PublicProductSerializer(result_page, many=True, context={'request': request})
+        return paginator.get_paginated_response(serializer.data)

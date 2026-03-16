@@ -5,7 +5,7 @@ import { Outlet } from "react-router";
 const ProtectedRoute = () => {
   const token = getToken();
   if (!token) {
-    return <Navigate to="/signin" replace />;
+    return <Navigate to="/admin/login" replace />;
   }
   return <Outlet />;
 };

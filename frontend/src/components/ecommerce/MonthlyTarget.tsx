@@ -16,7 +16,7 @@ export default function MonthlyTarget() {
   const series = [salesData?.progress_percentage || 0];
 
   const options: ApexOptions = {
-    colors: ["#465FFF"],
+    colors: ["#FFB700"],
     chart: {
       fontFamily: "Outfit, sans-serif",
       type: "radialBar",
@@ -55,7 +55,7 @@ export default function MonthlyTarget() {
     },
     fill: {
       type: "solid",
-      colors: [isError ? "#9CA3AF" : "#465FFF"], // Gray color for error
+      colors: [isError ? "#9CA3AF" : "#FFB700"], // Gray color for error
     },
     stroke: {
       lineCap: "round",

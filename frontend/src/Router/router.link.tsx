@@ -20,6 +20,7 @@ import Accounts from "../ecommerce-pages/pages/Accounts";
 import AccountOrders from "../ecommerce-pages/pages/AccountOrders";
 import CartPage from "../ecommerce-pages/pages/CartPage";
 import CheckoutPage from "../ecommerce-pages/pages/CheckoutPage";
+import UserProfile from "../ecommerce-pages/pages/UserProfile";
 const AdminTaxReport = lazy(() => import("../Admin/Reports/AdminTaxReport"));
 const TaxReport = lazy(() => import("../pages/Reports/TaxReport"));
 const AdminBrokerReport = lazy(
@@ -692,5 +693,11 @@ export const ecommerceRoutes = [
     name: "Checkout Page",
     link: ecommerceLinks.Checkout,
     element: <CheckoutPage />,
+  },
+  {
+    id: "16",
+    name: "User Profile",
+    link: ecommerceLinks.UserProfile,
+    element: <UserProfile />,
   },
 ];

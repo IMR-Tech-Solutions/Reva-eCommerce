@@ -1,16 +1,17 @@
 import { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight, ShoppingCart, Star, Heart } from "lucide-react";
+import { getpublicproductsservice } from "../../../services/productservices";
+import { ProductData } from "../../../types/types";
+import { handleError } from "../../../utils/handleError";
 
-// ── Types ──
-type Product = {
-  id: number;
-  name: string;
-  image: string;
-  rating: number;
-  reviewCount: number;
-  price: string;
-  originalPrice?: string;
-  badge?: string;
+// Utility to handle backend image URLs
+const getImageUrl = (imagePath: string) => {
+  if (!imagePath) return "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&q=80";
+  if (imagePath.startsWith("http")) return imagePath;
+
+  const baseUrl = import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000/api/";
+  const domain = baseUrl.replace("/api/", "");
+  return `${domain}${imagePath}`;
 };
 
 // ── Responsive Hook ──
@@ -30,103 +31,7 @@ const useVisibleCount = (): number => {
   return count;
 };
 
-// ── Products ──
-const allProducts: Product[] = [
-  {
-    id: 1,
-    name: "PIP Class 3 Orange Wind Breaker (XL)",
-    image: "/ecommerce-images/product1.jpg",
-    rating: 0,
-    reviewCount: 0,
-    price: "£13.00",
-    originalPrice: "£25.99",
-    badge: "SALE",
-  },
-  {
-    id: 2,
-    name: "MTM Hydro PF-22 Professional Foam",
-    image: "/ecommerce-images/product2.jpg",
-    rating: 0,
-    reviewCount: 0,
-    price: "£84.99",
-  },
-  {
-    id: 3,
-    name: "DEWALT 4 Piece Wood Chisel Set",
-    image: "/ecommerce-images/product3.jpg",
-    rating: 0,
-    reviewCount: 0,
-    price: "£35.99",
-    originalPrice: "£41.10",
-    badge: "SALE",
-  },
-  {
-    id: 4,
-    name: "Milwaukee 1-5/8 Ratcheting Pipe Cutter",
-    image: "/ecommerce-images/product4.jpg",
-    rating: 0,
-    reviewCount: 0,
-    price: "£57.99",
-    originalPrice: "£83.79",
-    badge: "SALE",
-  },
-  {
-    id: 5,
-    name: "Hitachi / Metabo HPT 16 Gauge Pneumatic Finish",
-    image: "/ecommerce-images/product5.jpg",
-    rating: 0,
-    reviewCount: 0,
-    price: "£119.00",
-    originalPrice: "£159.78",
-    badge: "SALE",
-  },
-  {
-    id: 6,
-    name: "ERB Boss Safety Glasses with Gray Frame and Gray",
-    image: "/ecommerce-images/product6.jpg",
-    rating: 0,
-    reviewCount: 0,
-    price: "£18.30",
-  },
-  {
-    id: 7,
-    name: "Makita 18V LXT Sub-Compact Brushless 2-",
-    image: "/ecommerce-images/product7.jpg",
-    rating: 0,
-    reviewCount: 0,
-    price: "£234.99",
-    originalPrice: "£462.80",
-    badge: "SALE",
-  },
-  {
-    id: 8,
-    name: "Klein Tools Electrician's Hybrid Plier Multi-Tool",
-    image: "/ecommerce-images/product8.jpg",
-    rating: 0,
-    reviewCount: 0,
-    price: "£50.00",
-  },
-  {
-    id: 9,
-    name: "Malco12 Andy Snip Heavy Duty Vinyl Snips",
-    image: "/ecommerce-images/product1.jpg",
-    rating: 0,
-    reviewCount: 0,
-    price: "£49.99",
-    originalPrice: "£59.82",
-    badge: "SALE",
-  },
-  {
-    id: 10,
-    name: "Duo-Fast Industrial Pneumatic Nailer with",
-    image: "/ecommerce-images/product2.jpg",
-    rating: 0,
-    reviewCount: 0,
-    price: "£409.99",
-    originalPrice: "£748.13",
-    badge: "SALE",
-  },
-];
+// No static data needed here anymore
 
 // ── Star Rating ──
 const StarRating = ({ rating }: { rating: number }) => (
@@ -146,18 +51,13 @@ const StarRating = ({ rating }: { rating: number }) => (
 );
 
 // ── Product Card ──
-const ProductCard = ({ product }: { product: Product }) => {
+const ProductCard = ({ product }: { product: ProductData }) => {
   const [wishlisted, setWishlisted] = useState<boolean>(false);
 
   return (
     <div className="relative flex flex-col border-b border-r border-gray-200 bg-white hover:z-10 hover:shadow-xl transition-all duration-200 group">
 
-      {/* Badge */}
-      {product.badge && (
-        <span className="absolute top-3 left-3 z-10 bg-[#FFB700] text-[#1C1C1E] text-[11px] font-black uppercase px-2.5 py-1 rounded-sm">
-          {product.badge}
-        </span>
-      )}
+      {/* No badge for now */}
 
       {/* Wishlist */}
       <button
@@ -174,8 +74,8 @@ const ProductCard = ({ product }: { product: Product }) => {
       {/* Image */}
       <div className="w-full h-56 flex items-center justify-center p-6 bg-white overflow-hidden">
         <img
-          src={product.image}
-          alt={product.name}
+          src={getImageUrl(product.product_image)}
+          alt={product.product_name}
           className="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform duration-300"
         />
       </div>
@@ -188,21 +88,16 @@ const ProductCard = ({ product }: { product: Product }) => {
 
         {/* Name */}
         <p className="text-[#1C1C1E] text-sm font-semibold leading-snug line-clamp-2 min-h-[40px] group-hover:text-[#FFB700] transition-colors duration-150">
-          {product.name}
+          {product.product_name}
         </p>
 
         {/* Stars */}
-        <StarRating rating={product.rating} />
+        <StarRating rating={4} />
 
         {/* Price */}
         <div className="flex flex-col gap-0.5 mt-1">
-          {product.originalPrice && (
-            <span className="text-gray-400 text-sm line-through">
-              {product.originalPrice}
-            </span>
-          )}
           <span className="text-[#FFB700] font-black text-xl leading-tight">
-            {product.price}
+            ₹{Number(product.price).toLocaleString("en-IN")}
           </span>
         </div>
 
@@ -218,17 +113,33 @@ const ProductCard = ({ product }: { product: Product }) => {
 
 // ── Main Component ──
 const FeaturedProducts = () => {
-  const visibleCount                = useVisibleCount();
+  const visibleCount = useVisibleCount();
   const [startIndex, setStartIndex] = useState<number>(0);
+  const [allProducts, setAllProducts] = useState<ProductData[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchFeatured = async () => {
+      try {
+        const data = await getpublicproductsservice();
+        setAllProducts(data);
+      } catch (err) {
+        handleError(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchFeatured();
+  }, []);
 
   useEffect(() => {
     setStartIndex(0);
   }, [visibleCount]);
 
   const totalItems = allProducts.length;
-  const maxStart   = totalItems - visibleCount * 2;
-  const canPrev    = startIndex > 0;
-  const canNext    = startIndex + visibleCount * 2 < totalItems;
+  const maxStart = totalItems - visibleCount * 2;
+  const canPrev = startIndex > 0;
+  const canNext = startIndex + visibleCount * 2 < totalItems;
 
   const handlePrev = () => {
     if (canPrev) setStartIndex((p) => Math.max(0, p - visibleCount));
@@ -238,13 +149,19 @@ const FeaturedProducts = () => {
   };
 
   const row1 = allProducts.slice(startIndex, startIndex + visibleCount);
-  const row2 = allProducts.slice(startIndex + visibleCount, startIndex + visibleCount * 2);
+  const row2 = allProducts.slice(
+    startIndex + visibleCount,
+    startIndex + visibleCount * 2
+  );
+
+  if (loading) return null;
+  if (allProducts.length === 0) return null;
 
   const gridCols =
     visibleCount === 5 ? "grid-cols-5" :
-    visibleCount === 4 ? "grid-cols-4" :
-    visibleCount === 3 ? "grid-cols-3" :
-    "grid-cols-2";
+      visibleCount === 4 ? "grid-cols-4" :
+        visibleCount === 3 ? "grid-cols-3" :
+          "grid-cols-2";
 
   return (
     <section className="bg-[#F5F5F5] py-10 px-4">
@@ -289,11 +206,11 @@ const FeaturedProducts = () => {
           {/* ── 2-Row Grid ── */}
           <div className={`grid ${gridCols} gap-0 border-t border-l border-gray-200`}>
             {/* Row 1 */}
-            {row1.map((product: Product) => (
+            {row1.map((product: ProductData) => (
               <ProductCard key={`r1-${product.id}`} product={product} />
             ))}
             {/* Row 2 */}
-            {row2.map((product: Product) => (
+            {row2.map((product: ProductData) => (
               <ProductCard key={`r2-${product.id}`} product={product} />
             ))}
           </div>
@@ -306,11 +223,10 @@ const FeaturedProducts = () => {
               <button
                 key={i}
                 onClick={() => setStartIndex(i * visibleCount)}
-                className={`rounded-full transition-all duration-300 ${
-                  Math.floor(startIndex / visibleCount) === i
-                    ? "w-5 h-2 bg-[#FFB700]"
-                    : "w-2 h-2 bg-gray-300 hover:bg-gray-400"
-                }`}
+                className={`rounded-full transition-all duration-300 ${Math.floor(startIndex / visibleCount) === i
+                  ? "w-5 h-2 bg-[#FFB700]"
+                  : "w-2 h-2 bg-gray-300 hover:bg-gray-400"
+                  }`}
                 aria-label={`Page ${i + 1}`}
               />
             ))}

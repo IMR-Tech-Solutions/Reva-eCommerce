@@ -1,4 +1,4 @@
-import {  useState } from "react";
+import { useState } from "react";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import PageMeta from "../../components/common/PageMeta";
 import ButtonLoading from "../../components/common/ButtonLoading";
@@ -480,7 +480,7 @@ const AddVendor = () => {
 
           {vendorData.is_self && (
             <div className="mb-5 p-4 bg-gray-300 border border-blue-200 rounded-lg">
-              <p className="text-sm text-blue-700">
+              <p className="text-sm text-[#FFB700]">
                 <strong>Note:</strong> Self vendor option selected. All fields
                 will be automatically filled with your profile information when
                 the vendor is created.

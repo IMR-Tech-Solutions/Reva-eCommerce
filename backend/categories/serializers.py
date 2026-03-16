@@ -5,8 +5,8 @@ class CategorySerializer(serializers.ModelSerializer):
     user_name = serializers.SerializerMethodField()
     class Meta:
         model = Category
-        fields = ["id", "user","user_name","category_name", "category_image"]
-        read_only_fields = ["id", "user","user_name"] 
+        fields = ["id", "user","user_name","category_name", "slug", "category_image"]
+        read_only_fields = ["id", "user","user_name", "slug"] 
 
     def get_user_name(self, obj):
         if obj.user:

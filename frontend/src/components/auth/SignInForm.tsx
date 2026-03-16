@@ -8,7 +8,7 @@ import api from "../../services/baseapi";
 import { useNavigate } from "react-router";
 import { useDispatch } from "react-redux";
 import { setUser, setPermissions } from "../../redux/userSlice";
-import { setTokens } from "../../authentication/auth";
+import { setTokens, removeTokens } from "../../authentication/auth";
 import ButtonLoading from "../common/ButtonLoading";
 import { handleError } from "../../utils/handleError";
 import { getusermoduleservice } from "../../services/gettingmoduleservice";
@@ -52,10 +52,21 @@ export default function SignInForm() {
         setTokens({ access, refresh });
         const userData = await api.get("me/");
         dispatch(setUser(userData.data));
+
+        // Enforce Admin/Staff role
+        const isAdmin = Number(userData.data.role_id) === 1 || userData.data.user_type_name === 'admin';
+        
+        if (!isAdmin) {
+          removeTokens();
+          setLoading(false);
+          toast.error("Customers must login via the main website.");
+          return;
+        }
+
         const perms = await getusermoduleservice(userData.data.role_id);
         dispatch(setPermissions(perms));
-        navigate("/");
-        toast.success("Signin successful !");
+        navigate("/dashboard");
+        toast.success("Login successful !");
       }
     } catch (error: any) {
       console.error("Error Occurred:", error);
@@ -146,7 +157,7 @@ export default function SignInForm() {
               <p className="text-sm font-normal text-center text-gray-700 dark:text-gray-400 sm:text-start">
                 Don&apos;t have an account? {""}
                 <Link
-                  to="/signup"
+                  to={all_routes.signUp}
                   className="text-brand-500 hover:text-brand-600 dark:text-brand-400"
                 >
                   Sign Up

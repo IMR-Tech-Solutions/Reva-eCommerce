@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import PageMeta from "../../components/common/PageMeta";
 import { Table, Input, Button, Space, Popconfirm } from "antd";
-import ComponentCard from "../../components/common/ComponentCard";
+import ButtonComponentCard from "../../Admin/Components/ButtonComponentCard";
 import {
   getallcategoriesservice,
   deletecategoryservice,
@@ -13,6 +13,7 @@ import { toast } from "react-toastify";
 import Editcategory from "./Editcategories";
 import { CategoryData } from "../../types/types";
 import { handleError } from "../../utils/handleError";
+import { all_routes } from "../../Router/allroutes";
 
 const { Search } = Input;
 
@@ -163,7 +164,11 @@ const Allcategories = () => {
         description="Manage and organize product categories seamlessly with Inventa."
       />
       <PageBreadcrumb pageTitle="Categories" />
-      <ComponentCard title="View All Categories">
+      <ButtonComponentCard
+        title="View All Categories"
+        buttonlink={all_routes.addcategories}
+        buttontitle="Add Category"
+      >
         <div className="mb-4">
           <Search
             placeholder="Search categories..."
@@ -187,7 +192,7 @@ const Allcategories = () => {
           scroll={{ x: 800 }}
           locale={{ emptyText: "No categories found." }}
         />
-      </ComponentCard>
+      </ButtonComponentCard>
       {updateCategoryData && (
         <Editcategory
           fetchCategories={fetchCategories}

@@ -1,7 +1,9 @@
 import { useParams, useNavigate } from "react-router";
-import { useState } from "react";
-import { products, Product } from "../data/products";
+import { useState, useEffect } from "react";
+import { Product } from "../data/products";
 import { useCart } from "../context/CartContext";
+import { getpublicproductsbycategoryservice } from "../../services/productservices";
+import { toast } from "react-toastify";
 import {
   SlidersHorizontal,
   Package,
@@ -176,15 +178,55 @@ const CategoryPage = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
 
+  const [allProducts, setAllProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState<SortOption>("default");
   const [visibleCount, setVisibleCount] = useState(8);
 
+  useEffect(() => {
+    let isMounted = true;
+    const fetchCategoryProducts = async () => {
+      if (!slug) return;
+      try {
+        setLoading(true);
+        const data = await getpublicproductsbycategoryservice(slug);
+        if (isMounted) {
+          const mappedProducts: Product[] = data.map((item: any) => ({
+            id: item.id,
+            name: item.product_name,
+            category: item.category_slug || item.category_name || slug,
+            material: item.material || "",
+            capacity: item.capacity,
+            pressure: item.pressure,
+            flowRate: item.flow_rate,
+            motorHP: item.motor_hp,
+            price: Number(item.price) || 0,
+            image: item.product_image
+              ? `${import.meta.env.VITE_API_IMG_URL ?? ""}${item.product_image}`
+              : "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&q=80",
+          }));
+          setAllProducts(mappedProducts);
+        }
+      } catch (error) {
+        if (isMounted) {
+          console.error("Error fetching category products", error);
+          toast.error("Failed to load category products");
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
+    fetchCategoryProducts();
+    return () => { isMounted = false; };
+  }, [slug]);
+
   const categoryLabel =
     categoryNames[slug as string] || slug?.replace(/-/g, " ") || "Products";
 
-  const filtered = products
-    .filter((p: Product) => p.category === slug)
+  const filtered = allProducts
     .filter((p: Product) =>
       search.trim() === "" ? true : p.name.toLowerCase().includes(search.toLowerCase())
     );
@@ -287,7 +329,12 @@ const CategoryPage = () => {
           </div>
         </div>
 
-        {sorted.length === 0 ? (
+        {loading ? (
+          <div className="flex flex-col items-center justify-center py-24 gap-4">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#FFB700]"></div>
+            <p className="text-gray-500 font-medium animate-pulse">Loading {categoryLabel}...</p>
+          </div>
+        ) : sorted.length === 0 ? (
           /* ── Empty State ── */
           <div className="flex flex-col items-center justify-center py-24 gap-5">
             <div className="w-20 h-20 bg-white border border-gray-200 rounded-full flex items-center justify-center shadow-sm">

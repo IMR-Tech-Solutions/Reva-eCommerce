@@ -76,7 +76,7 @@ const AppHeader: React.FC = () => {
     >
       {/* Your existing action buttons */}
       {permissions?.includes("shop") && (
-        <Link to={"shop"} target="_blank" className={isMobile ? "w-full" : ""}>
+        <Link to={"/shop"} target="_blank" className={isMobile ? "w-full" : ""}>
           <button
             className={`inline-flex truncate items-center gap-2 px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-yellow-600 shadow-theme-xs hover:bg-yellow-800 ${
               isMobile ? "w-full justify-center" : ""
@@ -105,7 +105,7 @@ const AppHeader: React.FC = () => {
       {/* Rest of your action buttons... */}
       {permissions?.includes("shop") && (
         <Link
-          to={"shop/pos"}
+          to={"/shop/pos"}
           target="_blank"
           className={isMobile ? "w-full" : ""}
         >
@@ -135,7 +135,7 @@ const AppHeader: React.FC = () => {
       )}
 
       {(permissions?.includes("pos") || permissions === "all") && (
-        <Link to={"pos"} target="_blank" className={isMobile ? "w-full" : ""}>
+        <Link to={"/pos"} target="_blank" className={isMobile ? "w-full" : ""}>
           <button
             className={`inline-flex items-center gap-2 px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-brand-500 shadow-theme-xs hover:bg-brand-600 ${
               isMobile ? "w-full justify-center" : ""

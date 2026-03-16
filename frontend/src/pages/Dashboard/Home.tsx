@@ -37,7 +37,7 @@ export default function Home() {
                   <h3 className="text-sm font-semibold text-blue-900 dark:text-blue-100">
                     Stay Updated with Instant Notifications
                   </h3>
-                  <p className="text-sm text-blue-700 dark:text-blue-200 mt-1">
+                  <p className="text-sm text-[#FFB700] dark:text-blue-200 mt-1">
                     Get real-time alerts for new orders, inventory updates, and
                     important system notifications directly on your device.
                   </p>

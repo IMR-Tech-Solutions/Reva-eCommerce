@@ -45,3 +45,11 @@ export const updatecategoryservice = async (
 ) => {
   await api.put(`update-category/${categoryID}/`, updatedData);
 };
+
+// ==============================
+// PUBLIC API (for ecommerce storefront)
+// ==============================
+export const getpubliccategoriesservice = async () => {
+  const response = await api.get("public/categories/");
+  return response.data;
+};

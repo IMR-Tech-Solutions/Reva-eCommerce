@@ -1,7 +1,7 @@
 // frontend/src/ecommerce-pages/pages/CheckoutPage.tsx
 import { useState } from "react";
 import { useNavigate } from "react-router";
-import { products, Product } from "../data/products";
+import { useCart } from "../context/CartContext";
 import {
   ArrowLeft, ChevronRight, CheckCircle,
   ShieldCheck, Truck, Phone, User,
@@ -10,8 +10,6 @@ import {
 } from "lucide-react";
 
 const formatPrice = (v: number) => `₹${v.toLocaleString("en-IN")}`;
-type CartItem = { product: Product; qty: number };
-const demoCart: CartItem[] = products.slice(0, 4).map((p, i) => ({ product: p, qty: i === 0 ? 2 : 1 }));
 
 // ── Reusable Input ──
 const Field = ({
@@ -59,17 +57,18 @@ const SelectField = ({
 
 const CheckoutPage = () => {
   const navigate = useNavigate();
-  const [cart]   = useState<CartItem[]>(demoCart);
+  const { cart, clearCart } = useCart();
   const [payMethod, setPayMethod] = useState<"bank" | "upi" | "cheque">("bank");
   const [submitted, setSubmitted] = useState(false);
 
   const subtotal = cart.reduce((s, i) => s + i.product.price * i.qty, 0);
-  const gst      = Math.round(subtotal * 0.18);
-  const total    = subtotal + gst;
+  const gst = Math.round(subtotal * 0.18);
+  const total = subtotal + gst;
   const totalQty = cart.reduce((s, i) => s + i.qty, 0);
 
   const handlePlaceOrder = () => {
     setSubmitted(true);
+    clearCart();
     setTimeout(() => navigate("/"), 3000);
   };
 
@@ -99,9 +98,9 @@ const CheckoutPage = () => {
             </div>
             <div className="w-full bg-[#F5F5F5] rounded-xl p-4 flex flex-col gap-2.5">
               {[
-                { label: "Order ID",     val: `#REVA-${Date.now().toString().slice(-6)}` },
-                { label: "Total Amount", val: formatPrice(total)                         },
-                { label: "Items",        val: `${totalQty} units`                        },
+                { label: "Order ID", val: `#REVA-${Date.now().toString().slice(-6)}` },
+                { label: "Total Amount", val: formatPrice(total) },
+                { label: "Items", val: `${totalQty} units` },
               ].map((r) => (
                 <div key={r.label} className="flex justify-between text-sm">
                   <span className="text-gray-400">{r.label}</span>
@@ -193,12 +192,12 @@ const CheckoutPage = () => {
               </div>
               <div className="p-5">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <Field label="First Name"    placeholder="e.g. Rajesh"              required icon={<User     size={14} />} />
-                  <Field label="Last Name"     placeholder="e.g. Sharma"              required icon={<User     size={14} />} />
-                  <Field label="Email Address" placeholder="email@company.com"        required type="email" icon={<Mail    size={14} />} />
-                  <Field label="Phone Number"  placeholder="+91 98765 43210"          required type="tel"   icon={<Phone   size={14} />} />
-                  <Field label="Company Name"  placeholder="e.g. Reva Engineering"    icon={<Building2 size={14} />} />
-                  <Field label="Designation"   placeholder="e.g. Procurement Manager" />
+                  <Field label="First Name" placeholder="e.g. Rajesh" required icon={<User size={14} />} />
+                  <Field label="Last Name" placeholder="e.g. Sharma" required icon={<User size={14} />} />
+                  <Field label="Email Address" placeholder="email@company.com" required type="email" icon={<Mail size={14} />} />
+                  <Field label="Phone Number" placeholder="+91 98765 43210" required type="tel" icon={<Phone size={14} />} />
+                  <Field label="Company Name" placeholder="e.g. Reva Engineering" icon={<Building2 size={14} />} />
+                  <Field label="Designation" placeholder="e.g. Procurement Manager" />
                 </div>
               </div>
             </div>
@@ -220,15 +219,15 @@ const CheckoutPage = () => {
                     <Field label="Address Line 1" placeholder="Building / Plot / Street" required icon={<MapPin size={14} />} />
                   </div>
                   <Field label="Address Line 2" placeholder="Area / Landmark" />
-                  <Field label="City"           placeholder="e.g. Pune"   required />
+                  <Field label="City" placeholder="e.g. Pune" required />
                   <SelectField
                     label="State" required
-                    options={["Select State","Maharashtra","Gujarat","Rajasthan","Tamil Nadu","Karnataka","Delhi","Uttar Pradesh","West Bengal","Telangana","Andhra Pradesh"]}
+                    options={["Select State", "Maharashtra", "Gujarat", "Rajasthan", "Tamil Nadu", "Karnataka", "Delhi", "Uttar Pradesh", "West Bengal", "Telangana", "Andhra Pradesh"]}
                   />
                   <Field label="PIN Code" placeholder="e.g. 411001" required type="number" />
                   <SelectField
                     label="Country" required
-                    options={["India","UAE","Saudi Arabia","Bangladesh","Nepal"]}
+                    options={["India", "UAE", "Saudi Arabia", "Bangladesh", "Nepal"]}
                   />
                 </div>
               </div>
@@ -273,9 +272,9 @@ const CheckoutPage = () => {
               <div className="p-5 flex flex-col gap-4">
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   {([
-                    { key: "bank",   label: "Bank Transfer", sub: "NEFT / RTGS / IMPS"   },
-                    { key: "upi",    label: "UPI Payment",   sub: "GPay / PhonePe / BHIM" },
-                    { key: "cheque", label: "Cheque / DD",   sub: "Company cheque"        },
+                    { key: "bank", label: "Bank Transfer", sub: "NEFT / RTGS / IMPS" },
+                    { key: "upi", label: "UPI Payment", sub: "GPay / PhonePe / BHIM" },
+                    { key: "cheque", label: "Cheque / DD", sub: "Company cheque" },
                   ] as const).map((m) => (
                     <button
                       key={m.key}
@@ -390,10 +389,10 @@ const CheckoutPage = () => {
               {/* Trust badges — same style as cart delivery badges */}
               <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 flex flex-col gap-3">
                 {[
-                  { icon: <ShieldCheck size={14} />, label: "SSL Secure Checkout",      sub: "256-bit encryption"        },
-                  { icon: <Truck       size={14} />, label: "Pan India Delivery",        sub: "5–7 business days"         },
-                  { icon: <Phone       size={14} />, label: "Engineering Support",       sub: "24/7 expert assistance"    },
-                  { icon: <Package     size={14} />, label: "Safe Packaging",            sub: "No transit damage"         },
+                  { icon: <ShieldCheck size={14} />, label: "SSL Secure Checkout", sub: "256-bit encryption" },
+                  { icon: <Truck size={14} />, label: "Pan India Delivery", sub: "5–7 business days" },
+                  { icon: <Phone size={14} />, label: "Engineering Support", sub: "24/7 expert assistance" },
+                  { icon: <Package size={14} />, label: "Safe Packaging", sub: "No transit damage" },
                 ].map((b) => (
                   <div key={b.label} className="flex items-center gap-3">
                     <div className="w-8 h-8 bg-[#FFB700]/10 border border-[#FFB700]/20 rounded-lg flex items-center justify-center text-[#FFB700] flex-shrink-0">

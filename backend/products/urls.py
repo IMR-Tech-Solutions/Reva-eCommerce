@@ -1,6 +1,7 @@
 from django.urls import path
 from .views import (
-    AddProductView, AllProductsView,AllUserProductsView,UserProductsView,UpdateProductView,ProductDetailView,DeleteProductView,UserActiveProductsView,BulkAddProductView,UserStockedProductsView,ShopProductsView
+    AddProductView, AllProductsView,AllUserProductsView,UserProductsView,UpdateProductView,ProductDetailView,DeleteProductView,UserActiveProductsView,BulkAddProductView,UserStockedProductsView,ShopProductsView,
+    PublicProductsView, PublicProductsByCategoryView
 )
 
 urlpatterns = [
@@ -18,4 +19,7 @@ urlpatterns = [
     path("add-products/bulk/", BulkAddProductView.as_view(), name="delete-product"),
     path("user/stock/products/", UserStockedProductsView.as_view(), name="stock-added-user"),
     path("shop/products/", ShopProductsView.as_view(), name="all-active-products"),
+    # Public API (No Auth - for ecommerce storefront)
+    path("public/products/", PublicProductsView.as_view(), name="public-products"),
+    path("public/products/category/<slug:slug>/", PublicProductsByCategoryView.as_view(), name="public-products-by-category"),
 ]

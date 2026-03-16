@@ -8,6 +8,7 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router";
 import Spinner from "../spinner/spinner";
 import { handleError } from "../../utils/handleError";
+import { all_routes } from "../../Router/allroutes";
 
 export default function SignUpForm() {
   const navigate = useNavigate();
@@ -44,7 +45,7 @@ export default function SignUpForm() {
     }
     try {
       await api.post("admin/register/", signupform);
-      navigate("/");
+      navigate(all_routes.signIn);
       toast.success("Signup Successfully !");
     } catch (error: any) {
       console.error("Error Occurred:", error);
@@ -184,7 +185,7 @@ export default function SignUpForm() {
               <p className="text-sm font-normal text-center text-gray-700 dark:text-gray-400 sm:text-start">
                 Already have an account? {""}
                 <Link
-                  to="/signin"
+                  to={all_routes.signIn}
                   className="text-brand-500 hover:text-brand-600 dark:text-brand-400"
                 >
                   Sign In

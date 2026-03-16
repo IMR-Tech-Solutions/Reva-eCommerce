@@ -113,24 +113,28 @@ const AdminProducts = () => {
         </span>
       ),
     },
-    // {
-    //   title: "Quantity",
-    //   dataIndex: "active_stock",
-    //   key: "quantity",
-    //   render: (stock: ProductData["active_stock"]) => (
-    //     <span>{stock?.quantity}</span>
-    //   ),
-    // },
-    // {
-    //   title: "Selling Price",
-    //   dataIndex: "active_stock",
-    //   key: "selling_price",
-    //   render: (stock: ProductData["active_stock"]) => (
-    //     <span className="text-gray-800 dark:text-white/90">
-    //       ₹{Number(stock?.selling_price).toFixed(2)}
-    //     </span>
-    //   ),
-    // },
+    {
+      title: "Material",
+      dataIndex: "material",
+      key: "material",
+      render: (val: string) => (
+        <span className="text-gray-800 dark:text-white/90">
+          {val || "—"}
+        </span>
+      ),
+    },
+    {
+      title: "Price (₹)",
+      dataIndex: "price",
+      key: "price",
+      sorter: (a: ProductData, b: ProductData) =>
+        Number(a.price || 0) - Number(b.price || 0),
+      render: (val: number | string) => (
+        <span className="text-gray-800 dark:text-white/90 font-medium">
+          {val ? `₹${Number(val).toLocaleString("en-IN")}` : "—"}
+        </span>
+      ),
+    },
     {
       title: "Status",
       dataIndex: "is_active",
@@ -142,6 +146,20 @@ const AdminProducts = () => {
           }
         >
           {isActive ? "Active" : "Inactive"}
+        </span>
+      ),
+    },
+    {
+      title: "Ecommerce",
+      dataIndex: "is_live",
+      key: "is_live",
+      render: (isLive: boolean) => (
+        <span
+          className={
+            isLive ? "text-blue-600 font-medium" : "text-gray-400 font-medium"
+          }
+        >
+          {isLive ? "Live" : "Off"}
         </span>
       ),
     },

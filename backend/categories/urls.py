@@ -11,7 +11,8 @@ from .views import (
     ShopCategoriesView,
     BulkAddCategoryView,
     UserStockedCategoriesView,
-    CategoriesForShopOwners
+    CategoriesForShopOwners,
+    PublicCategoriesView
 )
 
 urlpatterns = [
@@ -33,4 +34,6 @@ urlpatterns = [
     #SHOP
     path("shop/categories/", ShopCategoriesView.as_view(), name="all-categories"),
     path("shopowner-categories/", CategoriesForShopOwners.as_view(), name="all-categories"),
+    # Public API (No Auth - for ecommerce storefront)
+    path("public/categories/", PublicCategoriesView.as_view(), name="public-categories"),
 ]

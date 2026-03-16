@@ -67,12 +67,22 @@ export interface ProductData {
   unit: string;
   low_stock_threshold: number;
   is_active: boolean;
+  is_live: boolean;
   product_image: string;
   category: number;
   category_name: string;
   user?: number;
   user_name?: string;
   sku_code: string;
+
+  // Equipment specification fields
+  material?: string;
+  capacity?: string;
+  pressure?: string;
+  flow_rate?: string;
+  motor_hp?: string;
+  price?: number | string;
+
   active_stock: {
     // reference_number: string | null;
     quantity: number;
@@ -231,12 +241,12 @@ export interface POSOrderPayload {
   customer: number;
   order_items: POSOrderItem[];
   order_status:
-    | "pending"
-    | "confirmed"
-    | "processing"
-    | "ready"
-    | "completed"
-    | "cancelled";
+  | "pending"
+  | "confirmed"
+  | "processing"
+  | "ready"
+  | "completed"
+  | "cancelled";
   payment_status: "pending" | "paid" | "partial" | "failed" | "refunded";
   payment_method: "cash" | "card" | "upi" | "bank_transfer" | "credit";
   tax_amount: string;

@@ -47,22 +47,22 @@ export default function StatisticsChart() {
       const categories =
         selectedPeriod === "monthly"
           ? [
-              "Jan",
-              "Feb",
-              "Mar",
-              "Apr",
-              "May",
-              "Jun",
-              "Jul",
-              "Aug",
-              "Sep",
-              "Oct",
-              "Nov",
-              "Dec",
-            ]
+            "Jan",
+            "Feb",
+            "Mar",
+            "Apr",
+            "May",
+            "Jun",
+            "Jul",
+            "Aug",
+            "Sep",
+            "Oct",
+            "Nov",
+            "Dec",
+          ]
           : selectedPeriod === "quarterly"
-          ? ["Q1", "Q2", "Q3", "Q4"]
-          : ["2021", "2022", "2023", "2024", "2025"];
+            ? ["Q1", "Q2", "Q3", "Q4"]
+            : ["2021", "2022", "2023", "2024", "2025"];
 
       return {
         categories,
@@ -88,7 +88,7 @@ export default function StatisticsChart() {
       position: "top",
       horizontalAlign: "left",
     },
-    colors: ["#465FFF", "#9CB9FF"],
+    colors: ["#FFB700", "#9CB9FF"],
     chart: {
       fontFamily: "Outfit, sans-serif",
       height: 310,
@@ -242,11 +242,10 @@ export default function StatisticsChart() {
                   key={period.key}
                   onClick={() => handlePeriodChange(period.key)}
                   disabled={isLoading}
-                  className={`px-2 py-1 text-xs font-medium rounded-md transition-colors whitespace-nowrap disabled:opacity-50 ${
-                    selectedPeriod === period.key
+                  className={`px-2 py-1 text-xs font-medium rounded-md transition-colors whitespace-nowrap disabled:opacity-50 ${selectedPeriod === period.key
                       ? "bg-white text-blue-600 shadow-sm dark:bg-gray-700 dark:text-blue-400"
                       : "text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200"
-                  }`}
+                    }`}
                 >
                   {period.label}
                 </button>
@@ -256,22 +255,22 @@ export default function StatisticsChart() {
             {/* Year selector - Fixed width */}
             {(selectedPeriod === "monthly" ||
               selectedPeriod === "quarterly") && (
-              <select
-                value={selectedYear}
-                onChange={(e) => setSelectedYear(Number(e.target.value))}
-                disabled={isLoading}
-                className="w-16 px-2 py-1 text-xs border border-gray-200 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white disabled:opacity-50"
-              >
-                {Array.from({ length: 5 }, (_, i) => {
-                  const year = new Date().getFullYear() - i;
-                  return (
-                    <option key={year} value={year}>
-                      {year}
-                    </option>
-                  );
-                })}
-              </select>
-            )}
+                <select
+                  value={selectedYear}
+                  onChange={(e) => setSelectedYear(Number(e.target.value))}
+                  disabled={isLoading}
+                  className="w-16 px-2 py-1 text-xs border border-gray-200 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white disabled:opacity-50"
+                >
+                  {Array.from({ length: 5 }, (_, i) => {
+                    const year = new Date().getFullYear() - i;
+                    return (
+                      <option key={year} value={year}>
+                        {year}
+                      </option>
+                    );
+                  })}
+                </select>
+              )}
           </div>
         </div>
       </div>

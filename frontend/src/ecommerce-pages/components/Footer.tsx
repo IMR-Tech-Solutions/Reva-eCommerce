@@ -10,46 +10,46 @@ const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   const infoLinks = [
-    { label: "About us",             href: "/about" },
+    { label: "About us", href: "/about" },
     { label: "Delivery Information", href: "/delivery" },
-    { label: "Privacy Policy",       href: ecommerceLinks.PrivacyPolicy },
+    { label: "Privacy Policy", href: ecommerceLinks.PrivacyPolicy },
 
-    { label: "Terms & Conditions",   href: ecommerceLinks.TermsAndConditions },
+    { label: "Terms & Conditions", href: ecommerceLinks.TermsAndConditions },
   ];
 
   const accountLinks = [
     { label: "My account", href: ecommerceLinks.Account },
 
-    { label: "My Orders",  href: ecommerceLinks.AccountOrder },
-    { label: "Returns",    href: "/returns" },
-    { label: "Shipping",   href: ecommerceLinks.Shipping },
+    { label: "My Orders", href: ecommerceLinks.AccountOrder },
+    { label: "Returns", href: "/returns" },
+    { label: "Shipping", href: ecommerceLinks.Shipping },
   ];
 
 
 
   const offers = [
-    { icon: Truck,       title: "Free delivery", sub: "Worldwide from $27" },
-    { icon: ShieldCheck, title: "Warranty",       sub: "Up to 2 years" },
-    { icon: RefreshCcw,  title: "Easy return",    sub: "365 days return" },
-    { icon: LayoutGrid,  title: "Wide choice",    sub: "100k items available" },
+    { icon: Truck, title: "Free delivery", sub: "Worldwide from $27" },
+    { icon: ShieldCheck, title: "Warranty", sub: "Up to 2 years" },
+    { icon: RefreshCcw, title: "Easy return", sub: "365 days return" },
+    { icon: LayoutGrid, title: "Wide choice", sub: "100k items available" },
   ];
 
   const socials = [
-    { icon: Facebook,  href: "#", label: "Facebook" },
+    { icon: Facebook, href: "#", label: "Facebook" },
     { icon: Instagram, href: "#", label: "Instagram" },
-    { icon: Linkedin,  href: "#", label: "LinkedIn" },
-    { icon: Twitter,   href: "#", label: "Twitter" },
-    { icon: Youtube,   href: "#", label: "YouTube" },
+    { icon: Linkedin, href: "#", label: "LinkedIn" },
+    { icon: Twitter, href: "#", label: "Twitter" },
+    { icon: Youtube, href: "#", label: "YouTube" },
   ];
 
   const payments = [
-    { label: "Apple Pay",     bg: "bg-black",      text: "text-white" },
-    { label: "G Pay",         bg: "bg-white",      text: "text-gray-800" },
-    { label: "MC",            bg: "bg-red-600",    text: "text-white" },
-    { label: "PayPal",        bg: "bg-blue-700",   text: "text-white" },
-    { label: "PayPal Credit", bg: "bg-blue-500",   text: "text-white" },
-    { label: "VISA",          bg: "bg-blue-900",   text: "text-[#FFB700]" },
-    { label: "AMEX",          bg: "bg-sky-700",    text: "text-white" },
+    { label: "Apple Pay", bg: "bg-black", text: "text-white" },
+    { label: "G Pay", bg: "bg-white", text: "text-gray-800" },
+    { label: "MC", bg: "bg-red-600", text: "text-white" },
+    { label: "PayPal", bg: "bg-[#FFB700]", text: "text-white" },
+    { label: "PayPal Credit", bg: "bg-blue-500", text: "text-white" },
+    { label: "VISA", bg: "bg-blue-900", text: "text-[#FFB700]" },
+    { label: "AMEX", bg: "bg-sky-700", text: "text-white" },
   ];
 
   return (
@@ -153,7 +153,7 @@ const Footer = () => {
               </ul>
             </div>
 
-          
+
             {/* ── Col 5: Need Help ── */}
             <div className="flex flex-col gap-4">
               <p className="text-white text-sm">
@@ -210,7 +210,7 @@ const Footer = () => {
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-500 justify-center sm:justify-start">
             <span>© {currentYear} My Site. All rights reserved.</span>
             <span className="text-[#2C2C2E]">|</span>
-            <a href="/terms"   className="hover:text-[#FFB700] transition-colors">Terms and Conditions</a>
+            <a href="/terms" className="hover:text-[#FFB700] transition-colors">Terms and Conditions</a>
             <span className="text-[#2C2C2E]">|</span>
             <a href="/privacy" className="hover:text-[#FFB700] transition-colors">Privacy Policy</a>
             <span className="text-[#2C2C2E]">|</span>

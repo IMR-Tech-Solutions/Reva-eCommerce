@@ -4,7 +4,7 @@ import PageMeta from "../../components/common/PageMeta";
 import { Table, Input, Button, Space, Popconfirm } from "antd";
 import ButtonComponentCard from "../../Admin/Components/ButtonComponentCard";
 import {
-  stockaddedbyuserservice,
+  getmyproductservice,
   getsingleproductservice,
   deleteproductservice,
 } from "../../services/productservices";
@@ -36,7 +36,7 @@ const Products = () => {
   const fetchProducts = async () => {
     setLoading(true);
     try {
-      const data = await stockaddedbyuserservice();
+      const data = await getmyproductservice();
       setProducts(data);
       setfilteredProducts(data);
     } catch (err) {
@@ -130,7 +130,7 @@ const Products = () => {
       dataIndex: "active_stock",
       key: "quantity",
       render: (stock: ProductData["active_stock"]) => (
-        <span>{stock?.quantity}</span>
+        <span>{stock?.quantity ?? 0}</span>
       ),
     },
     {
@@ -139,7 +139,7 @@ const Products = () => {
       key: "selling_price",
       render: (stock: ProductData["active_stock"]) => (
         <span className="text-gray-800 dark:text-white/90">
-          ₹{Number(stock?.selling_price).toFixed(2)}
+          ₹{stock?.selling_price ? Number(stock.selling_price).toFixed(2) : "0.00"}
         </span>
       ),
     },
