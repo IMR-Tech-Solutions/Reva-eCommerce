@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
+import api from "../../services/baseapi";
 
 interface OrderItem {
+  id: number;
   name: string;
   qty: number;
   price: number;
@@ -9,68 +11,19 @@ interface OrderItem {
 
 interface Order {
   id: string;
+  order_number: string;
   date: string;
-  status: "Processing" | "Shipped" | "Delivered" | "Cancelled";
+  status: string;
   total: number;
   items: OrderItem[];
 }
 
-// ─── Replace with your real backend API call ─────────────────────────────────
-const fetchOrders = async (): Promise<Order[]> => {
-  // Example: const res = await fetch("/api/orders"); return res.json();
-  return new Promise((resolve) =>
-    setTimeout(() =>
-      resolve([
-        {
-          id: "ORD-10042",
-          date: "28 Feb 2026",
-          status: "Delivered",
-          total: 4299,
-          items: [
-            { name: "DeWalt 20V Cordless Drill", qty: 1, price: 3499, img: "https://images.unsplash.com/photo-1504148455328-c376907d081c?w=100&q=80" },
-            { name: "Stanley Toolbox Set", qty: 1, price: 800, img: "https://images.unsplash.com/photo-1572981779307-38b8cabb2407?w=100&q=80" },
-          ],
-        },
-        {
-          id: "ORD-10031",
-          date: "14 Feb 2026",
-          status: "Shipped",
-          total: 1850,
-          items: [
-            { name: "Makita Angle Grinder 4.5\"", qty: 2, price: 925, img: "https://images.unsplash.com/photo-1530124566582-a618bc2615dc?w=100&q=80" },
-          ],
-        },
-        {
-          id: "ORD-10018",
-          date: "02 Feb 2026",
-          status: "Processing",
-          total: 6799,
-          items: [
-            { name: "Bosch Professional Jigsaw", qty: 1, price: 4299, img: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=100&q=80" },
-            { name: "Safety Gloves Pack (5 pairs)", qty: 1, price: 500, img: "https://images.unsplash.com/photo-1586864387967-d02ef85d93e8?w=100&q=80" },
-            { name: "Irwin Clamp Set", qty: 2, price: 1000, img: "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=100&q=80" },
-          ],
-        },
-        {
-          id: "ORD-09987",
-          date: "10 Jan 2026",
-          status: "Cancelled",
-          total: 2100,
-          items: [
-            { name: "Klein Tools Wire Stripper", qty: 1, price: 2100, img: "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=100&q=80" },
-          ],
-        },
-      ]),
-    800)
-  );
-};
-// ─────────────────────────────────────────────────────────────────────────────
-
-const statusConfig: Record<Order["status"], { label: string; classes: string }> = {
-  Processing: { label: "Processing", classes: "bg-blue-50 text-blue-600 border border-blue-200" },
-  Shipped:    { label: "Shipped",    classes: "bg-yellow-50 text-[#CC9200] border border-[#FFB700]" },
-  Delivered:  { label: "Delivered",  classes: "bg-green-50 text-green-600 border border-green-200" },
-  Cancelled:  { label: "Cancelled",  classes: "bg-red-50 text-red-500 border border-red-200" },
+const statusConfig: Record<string, { label: string; classes: string }> = {
+  "Order Placed": { label: "Order Placed", classes: "bg-blue-50 text-blue-600 border border-blue-200" },
+  "Processing":   { label: "Processing",    classes: "bg-yellow-50 text-[#CC9200] border border-[#FFB700]" },
+  "Dispatched":    { label: "Dispatched",     classes: "bg-indigo-50 text-indigo-600 border border-indigo-200" },
+  "Delivered":     { label: "Delivered",      classes: "bg-green-50 text-green-600 border border-green-200" },
+  "Cancelled":     { label: "Cancelled",      classes: "bg-red-50 text-red-500 border border-red-200" },
 };
 
 function AccountOrders() {
@@ -79,10 +32,35 @@ function AccountOrders() {
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchOrders().then((data) => {
-      setOrders(data);
-      setLoading(false);
-    });
+    const getOrders = async () => {
+      try {
+        const res = await api.get("ecommerce/my-orders/");
+        const mappedOrders: Order[] = res.data.map((o: any) => ({
+          id: o.id.toString(),
+          order_number: o.order_number,
+          date: new Date(o.created_at).toLocaleDateString("en-IN", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric"
+          }),
+          status: o.status,
+          total: parseFloat(o.total_amount),
+          items: o.items.map((i: any) => ({
+            id: i.id,
+            name: i.product_name,
+            qty: i.quantity,
+            price: parseFloat(i.price),
+            img: i.product_image
+          }))
+        }));
+        setOrders(mappedOrders);
+      } catch (err) {
+        console.error("Failed to fetch orders", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    getOrders();
   }, []);
 
   const toggleExpand = (id: string) => {
@@ -140,7 +118,7 @@ function AccountOrders() {
         {!loading && orders.length > 0 && (
           <div className="flex flex-col gap-4">
             {orders.map((order) => {
-              const status = statusConfig[order.status];
+              const status = statusConfig[order.status] || { label: order.status, classes: "bg-gray-50 text-gray-600 border border-gray-200" };
               const isExpanded = expandedId === order.id;
 
               return (
@@ -154,7 +132,7 @@ function AccountOrders() {
                     <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6">
                       <div>
                         <p className="text-xs text-gray-400 font-medium">Order ID</p>
-                        <p className="text-gray-900 font-bold text-sm">{order.id}</p>
+                        <p className="text-gray-900 font-bold text-sm">{order.order_number}</p>
                       </div>
                       <div>
                         <p className="text-xs text-gray-400 font-medium">Placed On</p>
@@ -169,9 +147,9 @@ function AccountOrders() {
                     <div className="flex items-center justify-between sm:justify-end gap-4">
                       <div className="text-right">
                         <p className="text-xs text-gray-400 font-medium">Total</p>
-                        <p className="text-gray-900 font-extrabold text-base">₹{order.total.toLocaleString()}</p>
+                        <p className="text-gray-900 font-extrabold text-base">₹{order.total.toLocaleString("en-IN")}</p>
                       </div>
-                      <span className={`text-xs font-semibold px-3 py-1 rounded-full ${status.classes}`}>
+                      <span className={`text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-full ${status.classes}`}>
                         {status.label}
                       </span>
                       <svg
@@ -190,12 +168,16 @@ function AccountOrders() {
                       <div className="flex flex-col gap-3">
                         {order.items.map((item, idx) => (
                           <div key={idx} className="flex items-center gap-4">
-                            <img src={item.img} alt={item.name} className="w-14 h-14 object-cover rounded-lg border border-gray-100 flex-shrink-0" />
+                            <img 
+                              src={item.img?.startsWith('http') ? item.img : `${import.meta.env.VITE_API_IMG_URL}${item.img}`} 
+                              alt={item.name} 
+                              className="w-14 h-14 object-cover rounded-lg border border-gray-100 flex-shrink-0" 
+                            />
                             <div className="flex-1 min-w-0">
-                              <p className="text-gray-800 font-semibold text-sm truncate">{item.name}</p>
+                                <p className="text-gray-800 font-semibold text-sm truncate">{item.name}</p>
                               <p className="text-gray-400 text-xs mt-0.5">Qty: {item.qty}</p>
                             </div>
-                            <p className="text-gray-900 font-bold text-sm flex-shrink-0">₹{(item.price * item.qty).toLocaleString()}</p>
+                            <p className="text-gray-900 font-bold text-sm flex-shrink-0">₹{(item.price * item.qty).toLocaleString("en-IN")}</p>
                           </div>
                         ))}
                       </div>
@@ -203,7 +185,7 @@ function AccountOrders() {
                       <div className="flex items-center justify-between mt-5 pt-4 border-t border-gray-100">
                         <div>
                           <p className="text-xs text-gray-400">Order Total</p>
-                          <p className="text-gray-900 font-extrabold text-lg">₹{order.total.toLocaleString()}</p>
+                          <p className="text-gray-900 font-extrabold text-lg">₹{order.total.toLocaleString("en-IN")}</p>
                         </div>
                         <div className="flex gap-2 flex-wrap justify-end">
                           {order.status === "Delivered" && (
@@ -211,7 +193,7 @@ function AccountOrders() {
                               Reorder
                             </button>
                           )}
-                          {(order.status === "Processing" || order.status === "Shipped") && (
+                          {(order.status === "Order Placed" || order.status === "Processing" || order.status === "Dispatched") && (
                             <button className="text-xs sm:text-sm font-semibold bg-[#FFB700] hover:bg-[#FFC933] text-black px-4 py-2 rounded-lg transition-colors">
                               Track Order
                             </button>

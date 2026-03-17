@@ -121,10 +121,10 @@ class CancelPOSOrderView(APIView):
         try:
             # Rollback inventory for each order item
             rollback_messages = []
+            rollback_warnings = []
             for order_item in pos_order.order_items.all():
-                # NEW LOGIC: Check if order item has original_stock_batch info
+                # Check if order item has original_stock_batch info
                 if order_item.original_stock_batch:
-                    # Use new method to rollback to original batch
                     success, message = InventoryService.rollback_stock_to_original_batch(
                         order_item.original_stock_batch, 
                         order_item.quantity
@@ -133,33 +133,56 @@ class CancelPOSOrderView(APIView):
                     # Fallback for old orders without original_stock_batch
                     success, message = InventoryService.rollback_stock(
                         order_item.product, 
-                        order_item.quantity
+                        order_item.quantity,
+                        user=pos_order.user
                     )
                 
                 rollback_messages.append(f"{order_item.product.product_name}: {message}")
                 
                 if not success:
-                    return Response({
-                        'error': 'Failed to rollback inventory',
-                        'details': rollback_messages
-                    }, status=status.HTTP_400_BAD_REQUEST)
+                    # Log warning but don't block cancellation
+                    rollback_warnings.append(f"{order_item.product.product_name}: {message}")
             
-            # Update order status
+            # Update order status regardless of rollback outcome
             pos_order.order_status = 'cancelled'
             pos_order.payment_status = 'refunded' if pos_order.payment_status == 'paid' else 'failed'
             pos_order.save()
             
-            return Response({
+            response_data = {
                 'message': 'Order cancelled successfully',
                 'inventory_rollback': rollback_messages,
                 'order': POSOrderSerializer(pos_order).data
-            })
+            }
+            if rollback_warnings:
+                response_data['warnings'] = rollback_warnings
+            
+            return Response(response_data)
             
         except Exception as e:
             return Response({
                 'error': f'Failed to cancel order: {str(e)}'
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+
+# Delete POS Order (DELETE) - Permanently remove order
+class DeletePOSOrderView(APIView):
+    permission_classes = [IsAuthenticated, HasModuleAccess, IsOwnerOrAdmin]
+    required_permission = "cancel-pos-order"
+    
+    def delete(self, request, pk):
+        pos_order = get_object_or_404(POSOrder, pk=pk)
+        self.check_object_permissions(request, pos_order)
+        
+        try:
+            order_number = pos_order.order_number
+            pos_order.delete()
+            return Response({
+                'message': f'Order {order_number} deleted successfully'
+            }, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({
+                'error': f'Failed to delete order: {str(e)}'
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 from shop.models import ShopOwnerProducts
 class AddShopPOSOrderView(APIView):

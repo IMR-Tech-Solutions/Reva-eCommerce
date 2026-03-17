@@ -28,7 +28,7 @@ class AllCustomersView(APIView):
         customers = Customer.objects.all().order_by('id')
         paginator = PageNumberPagination()
         result_page = paginator.paginate_queryset(customers, request)
-        serializer = CustomerSerializer(result_page, many=True)
+        serializer = CustomerSerializer(result_page, many=True, context={'request': request})
         return paginator.get_paginated_response(serializer.data)
 
 
@@ -39,7 +39,7 @@ class AllUserCustomersView(APIView):
         customers = Customer.objects.filter(user_id=user_id).order_by('id')
         paginator = PageNumberPagination()
         result_page = paginator.paginate_queryset(customers, request)
-        serializer = CustomerSerializer(result_page, many=True)
+        serializer = CustomerSerializer(result_page, many=True, context={'request': request})
         return paginator.get_paginated_response(serializer.data)
 
 
@@ -52,7 +52,7 @@ class UserCustomersView(APIView):
         customers = Customer.objects.filter(user_id=user_id).order_by('id')
         paginator = PageNumberPagination()
         result_page = paginator.paginate_queryset(customers, request)
-        serializer = CustomerSerializer(result_page, many=True)
+        serializer = CustomerSerializer(result_page, many=True, context={'request': request})
         return paginator.get_paginated_response(serializer.data)
 
 

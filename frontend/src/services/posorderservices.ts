@@ -40,6 +40,12 @@ export const cancelposorderservice = async (orderID: number) => {
   return response.data;
 };
 
+// Delete POS Order permanently
+export const deleteposorderservice = async (orderID: number) => {
+  const response = await api.delete(`delete-pos-order/${orderID}/`);
+  return response.data;
+};
+
 // Get single POS order data
 export const getsingleposorderservice = async (orderID: number) => {
   const response = await api.get(`pos-order/${orderID}/`);

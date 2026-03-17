@@ -11,11 +11,11 @@ import { handleError } from "../../utils/handleError";
 const UserProfile = () => {
     const dispatch = useDispatch();
     const { user } = useSelector((state: any) => state.user);
-    
+
     const [loading, setLoading] = useState(false);
     const [userData, setUserData] = useState<any>(null);
     const [imagePreview, setImagePreview] = useState<string | null>(null);
-    
+
     const [formData, setFormData] = useState({
         first_name: "",
         last_name: "",
@@ -51,7 +51,10 @@ const UserProfile = () => {
                 address: data.address || "",
             });
             if (data.user_image) {
-                setImagePreview(`${import.meta.env.VITE_API_IMG_URL}${data.user_image}`);
+                const imageUrl = data.user_image.startsWith('http') 
+                    ? data.user_image 
+                    : `${import.meta.env.VITE_API_IMG_URL}${data.user_image}`;
+                setImagePreview(imageUrl);
             }
         } catch (error) {
             console.error("Failed to fetch profile", error);
@@ -82,7 +85,7 @@ const UserProfile = () => {
                 setImagePreview(reader.result as string);
             };
             reader.readAsDataURL(file);
-            
+
             const data = new FormData();
             data.append("user_image", file);
             try {
@@ -110,11 +113,11 @@ const UserProfile = () => {
             });
 
             await updateUserDetails(submissionData);
-            
+
             const updatedUserRes = await api.get("me/");
             dispatch(setUser(updatedUserRes.data));
             await fetchFullProfile();
-            
+
             toast.success("Profile updated successfully!");
         } catch (error) {
             handleError(error);
@@ -149,7 +152,7 @@ const UserProfile = () => {
             toast.error("New passwords do not match!");
             return;
         }
-        
+
         setLoading(true);
         try {
             await confirmPasswordResetService({
@@ -182,7 +185,7 @@ const UserProfile = () => {
                         <p className="text-gray-500 mt-2 font-medium">Manage your personal information and security preferences.</p>
                     </div>
                     <div className="flex items-center gap-3">
-                        <button 
+                        <button
                             onClick={handleSaveProfile}
                             disabled={loading}
                             className="bg-[#CC9200] hover:bg-[#B38000] text-white px-8 py-3.5 rounded-2xl font-bold shadow-lg shadow-[#CC9200]/20 transition-all active:scale-95 disabled:opacity-50 flex items-center gap-2"
@@ -195,17 +198,17 @@ const UserProfile = () => {
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                     {/* Left Column - Profile & Info */}
                     <div className="lg:col-span-8 space-y-8">
-                        
+
                         {/* Profile Identity Card */}
                         <div className="bg-white rounded-[2.5rem] p-10 shadow-sm border border-gray-100 flex flex-col md:flex-row gap-8 items-center md:items-start text-center md:text-left relative overflow-hidden group">
-                           <div className="absolute top-0 right-0 w-32 h-32 bg-[#CC9200]/5 rounded-full -mr-16 -mt-16 transition-transform group-hover:scale-150 duration-700" />
-                           
-                           <div className="relative">
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-[#CC9200]/5 rounded-full -mr-16 -mt-16 transition-transform group-hover:scale-150 duration-700" />
+
+                            <div className="relative">
                                 <div className="w-40 h-40 rounded-[2rem] overflow-hidden border-4 border-white shadow-2xl bg-gray-100">
                                     <div className="w-full h-full relative">
-                                        <img 
-                                            src={imagePreview || "/images/user/default.png"} 
-                                            alt="User" 
+                                        <img
+                                            src={imagePreview || "/images/user/default.png"}
+                                            alt="User"
                                             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                                         />
                                         {loading && (
@@ -219,15 +222,15 @@ const UserProfile = () => {
                                     <Camera size={20} strokeWidth={2.5} />
                                     <input type="file" className="hidden" accept="image/*" onChange={handleImageChange} />
                                 </label>
-                           </div>
+                            </div>
 
-                           <div className="flex-1">
+                            <div className="flex-1">
                                 <span className="inline-flex items-center gap-1.5 px-4 py-1.5 bg-green-50 text-green-700 text-xs font-black rounded-full uppercase tracking-wider mb-4 border border-green-100">
                                     <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" /> Verified
                                 </span>
                                 <h2 className="text-3xl font-extrabold text-[#1C1C1E]">{userData.first_name} {userData.last_name}</h2>
                                 <p className="text-gray-400 font-medium mt-1 mb-6">{userData.email}</p>
-                                
+
                                 <div className="flex flex-wrap items-center justify-center md:justify-start gap-4">
                                     <div className="flex items-center gap-2 px-4 py-2 bg-gray-50 rounded-xl border border-gray-100">
                                         <Briefcase size={16} className="text-[#CC9200]" />
@@ -238,7 +241,7 @@ const UserProfile = () => {
                                         <span className="text-sm font-bold text-gray-700">Online</span>
                                     </div>
                                 </div>
-                           </div>
+                            </div>
                         </div>
 
                         {/* Editable Information */}
@@ -250,8 +253,8 @@ const UserProfile = () => {
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
                                 <div className="space-y-3">
                                     <label className="text-[13px] font-black text-gray-400 uppercase tracking-widest ml-1">First Name</label>
-                                    <input 
-                                        type="text" 
+                                    <input
+                                        type="text"
                                         name="first_name"
                                         value={formData.first_name}
                                         onChange={handleInputChange}
@@ -261,8 +264,8 @@ const UserProfile = () => {
                                 </div>
                                 <div className="space-y-3">
                                     <label className="text-[13px] font-black text-gray-400 uppercase tracking-widest ml-1">Last Name</label>
-                                    <input 
-                                        type="text" 
+                                    <input
+                                        type="text"
                                         name="last_name"
                                         value={formData.last_name}
                                         onChange={handleInputChange}
@@ -280,8 +283,8 @@ const UserProfile = () => {
                                     <label className="text-[13px] font-black text-gray-400 uppercase tracking-widest ml-1">Phone Number</label>
                                     <div className="relative">
                                         <Phone size={18} className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-300" />
-                                        <input 
-                                            type="text" 
+                                        <input
+                                            type="text"
                                             name="mobile_number"
                                             value={formData.mobile_number}
                                             onChange={handleInputChange}
@@ -295,14 +298,14 @@ const UserProfile = () => {
 
                         {/* Address Details */}
                         <div className="bg-white rounded-[2.5rem] p-10 shadow-sm border border-gray-100">
-                             <h3 className="text-xl font-black text-[#1C1C1E] mb-8 flex items-center gap-3">
+                            <h3 className="text-xl font-black text-[#1C1C1E] mb-8 flex items-center gap-3">
                                 <MapPin size={24} className="text-[#CC9200]" /> Delivery Information
                             </h3>
 
                             <div className="space-y-8">
                                 <div className="space-y-3">
                                     <label className="text-[13px] font-black text-gray-400 uppercase tracking-widest ml-1">Street Address</label>
-                                    <textarea 
+                                    <textarea
                                         name="address"
                                         value={formData.address}
                                         onChange={handleInputChange}
@@ -315,8 +318,8 @@ const UserProfile = () => {
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
                                     <div className="space-y-3">
                                         <label className="text-[13px] font-black text-gray-400 uppercase tracking-widest ml-1">City</label>
-                                        <input 
-                                            type="text" 
+                                        <input
+                                            type="text"
                                             name="city"
                                             value={formData.city}
                                             onChange={handleInputChange}
@@ -325,8 +328,8 @@ const UserProfile = () => {
                                     </div>
                                     <div className="space-y-3">
                                         <label className="text-[13px] font-black text-gray-400 uppercase tracking-widest ml-1">State / Province</label>
-                                        <input 
-                                            type="text" 
+                                        <input
+                                            type="text"
                                             name="state"
                                             value={formData.state}
                                             onChange={handleInputChange}
@@ -337,8 +340,8 @@ const UserProfile = () => {
                                         <label className="text-[13px] font-black text-gray-400 uppercase tracking-widest ml-1">Country</label>
                                         <div className="relative">
                                             <Globe size={18} className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-300" />
-                                            <input 
-                                                type="text" 
+                                            <input
+                                                type="text"
                                                 name="country"
                                                 value={formData.country}
                                                 onChange={handleInputChange}
@@ -348,8 +351,8 @@ const UserProfile = () => {
                                     </div>
                                     <div className="space-y-3">
                                         <label className="text-[13px] font-black text-gray-400 uppercase tracking-widest ml-1">Postal Code</label>
-                                        <input 
-                                            type="text" 
+                                        <input
+                                            type="text"
                                             name="postal_code"
                                             value={formData.postal_code}
                                             onChange={handleInputChange}
@@ -363,10 +366,10 @@ const UserProfile = () => {
 
                     {/* Right Column - Security & Sidebar */}
                     <div className="lg:col-span-4 space-y-8">
-                        
+
                         {/* Password Change Card */}
                         <div className="bg-white rounded-[2.5rem] p-10 shadow-sm border border-gray-100">
-                             <h3 className="text-xl font-black text-[#1C1C1E] mb-8 flex items-center gap-3">
+                            <h3 className="text-xl font-black text-[#1C1C1E] mb-8 flex items-center gap-3">
                                 <Lock size={24} className="text-[#CC9200]" /> Password Security
                             </h3>
 
@@ -375,10 +378,10 @@ const UserProfile = () => {
                                     <p className="text-sm font-medium text-gray-500 mb-4">
                                         Forgot your password or want to set a new one? We will send a secure OTP code to your registered email addressing finishing in <span className="font-bold text-[#1C1C1E]">{userData?.email?.split('@')[0].slice(-3)}@{userData?.email?.split('@')[1]}</span>.
                                     </p>
-                                    <button 
+                                    <button
                                         onClick={handleRequestResetToken}
                                         disabled={loading}
-                                        className="w-full py-5 bg-[#1C1C1E] text-white rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-black transition-all active:scale-95 disabled:opacity-50 mt-4 shadow-xl shadow-black/10 flex items-center justify-center gap-2"
+                                        className="w-full py-5 bg-[#1C1C1E] px-2 text-white rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-black transition-all active:scale-95 disabled:opacity-50 mt-4 shadow-xl shadow-black/10 flex items-center justify-center gap-2"
                                     >
                                         <Mail size={18} /> Request Security Code
                                     </button>
@@ -390,8 +393,8 @@ const UserProfile = () => {
                                     </p>
                                     <div className="space-y-2">
                                         <label className="text-[11px] font-black text-gray-400 uppercase tracking-[0.2em] ml-1">Security Code (OTP)</label>
-                                        <input 
-                                            type="text" 
+                                        <input
+                                            type="text"
                                             name="token"
                                             value={resetData.token}
                                             onChange={handleResetDataChange}
@@ -401,8 +404,8 @@ const UserProfile = () => {
                                     </div>
                                     <div className="space-y-2">
                                         <label className="text-[11px] font-black text-gray-400 uppercase tracking-[0.2em] ml-1">New Password</label>
-                                        <input 
-                                            type="password" 
+                                        <input
+                                            type="password"
                                             name="new_password"
                                             value={resetData.new_password}
                                             onChange={handleResetDataChange}
@@ -412,8 +415,8 @@ const UserProfile = () => {
                                     </div>
                                     <div className="space-y-2">
                                         <label className="text-[11px] font-black text-gray-400 uppercase tracking-[0.2em] ml-1">Confirm Password</label>
-                                        <input 
-                                            type="password" 
+                                        <input
+                                            type="password"
                                             name="confirm_password"
                                             value={resetData.confirm_password}
                                             onChange={handleResetDataChange}
@@ -421,9 +424,9 @@ const UserProfile = () => {
                                             placeholder="Repeat new"
                                         />
                                     </div>
-                                    
+
                                     <div className="flex gap-3 pt-4">
-                                        <button 
+                                        <button
                                             onClick={() => {
                                                 setResetStep("request");
                                                 setResetData({ token: "", new_password: "", confirm_password: "" });
@@ -433,7 +436,7 @@ const UserProfile = () => {
                                         >
                                             Cancel
                                         </button>
-                                        <button 
+                                        <button
                                             onClick={handleConfirmPasswordReset}
                                             disabled={loading || !resetData.token || !resetData.new_password}
                                             className="flex-[2] py-4 bg-[#1C1C1E] text-white rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-black transition-all active:scale-95 disabled:opacity-50 shadow-xl shadow-black/10"

@@ -201,7 +201,7 @@ class UpdateMyProfileView(APIView):
         if "user_type" in request.data:
             return Response({"error": "Role change is not allowed from this endpoint."},
                             status=status.HTTP_403_FORBIDDEN)
-        serializer = UserMasterSerializer(user, data=request.data, partial=True)
+        serializer = UserMasterSerializer(user, data=request.data, partial=True, context={'request': request})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -212,7 +212,7 @@ class UserProfileView(APIView):
     permission_classes = [IsAuthenticated]
     def get(self, request):
         user = get_object_or_404(UserMaster, pk=request.user.id)
-        serializer = UserMasterSerializer(user)
+        serializer = UserMasterSerializer(user, context={'request': request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 #Get particular user data for redux storing in frontend
@@ -220,7 +220,7 @@ class MeView(APIView):
     permission_classes = [IsAuthenticated]
     def get(self, request):
         user = request.user
-        serializer = MeSerializer(user)
+        serializer = MeSerializer(user, context={'request': request})
         return Response({
             **serializer.data,
         })

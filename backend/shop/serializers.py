@@ -3,6 +3,7 @@ from django.db import transaction
 from .models import ShopOwnerOrders, ShopOrderItem, ManagerRequest, ShopOwnerProducts
 from products.models import Product
 from inventory.models import StockBatch
+from posorders.models import POSOrder, POSOrderItem
 
 class ShopOrderItemSerializer(serializers.ModelSerializer):
     product_name = serializers.CharField(source='product.product_name', read_only=True)
@@ -152,4 +153,60 @@ class ShopOwnerProductsSerializer(serializers.ModelSerializer):
     
     def get_source_manager_name(self, obj):
         return f"{obj.source_manager.first_name} {obj.source_manager.last_name}"
+
+
+from .models import Cart, CartItem
+class CartItemSerializer(serializers.ModelSerializer):
+    product_name = serializers.CharField(source='product.product_name', read_only=True)
+    product_image = serializers.ImageField(source='product.product_image', read_only=True)
+    price = serializers.DecimalField(source='product.price', max_digits=12, decimal_places=2, read_only=True)
+    category_name = serializers.CharField(source='product.category.category_name', read_only=True)
+    material = serializers.CharField(source='product.material', read_only=True)
+    capacity = serializers.CharField(source='product.capacity', read_only=True)
+    pressure = serializers.CharField(source='product.pressure', read_only=True)
+    motor_hp = serializers.CharField(source='product.motor_hp', read_only=True)
+
+    class Meta:
+        model = CartItem
+        fields = ['id', 'product', 'product_name', 'product_image', 'price', 'quantity', 
+                  'category_name', 'material', 'capacity', 'pressure', 'motor_hp']
+
+class CartSerializer(serializers.ModelSerializer):
+    items = CartItemSerializer(many=True, read_only=True)
+    total_items = serializers.SerializerMethodField()
+    total_price = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Cart
+        fields = ['id', 'user', 'items', 'total_items', 'total_price', 'updated_at']
+
+    def get_total_items(self, obj):
+        return sum(item.quantity for item in obj.items.all())
+
+    def get_total_price(self, obj):
+        return sum(item.quantity * item.product.price for item in obj.items.all())
+
+class EcommerceOrderItemSerializer(serializers.ModelSerializer):
+    product_name = serializers.CharField(source='product.product_name', read_only=True)
+    product_image = serializers.SerializerMethodField()
+
+    class Meta:
+        model = POSOrderItem
+        fields = ['id', 'product', 'product_name', 'product_image', 'quantity', 'unit_price', 'total_price']
+
+    def get_product_image(self, obj):
+        if obj.product.product_image:
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(obj.product.product_image.url)
+            return obj.product.product_image.url
+        return None
+
+class EcommerceOrderSerializer(serializers.ModelSerializer):
+    items = EcommerceOrderItemSerializer(source='order_items', many=True, read_only=True)
+    status = serializers.CharField(source='order_status')
+
+    class Meta:
+        model = POSOrder
+        fields = ['id', 'order_number', 'status', 'payment_status', 'total_amount', 'items', 'created_at']
     

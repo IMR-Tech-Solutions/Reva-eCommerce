@@ -30,7 +30,7 @@ const PosHeader: React.FC = () => {
         <div className="flex items-center justify-between w-full gap-2 px-3 py-3 border-b border-gray-200 dark:border-gray-800 sm:gap-4 lg:justify-normal lg:border-b-0 lg:px-0 lg:py-4">
           <div className="hidden md:block">
             <div className="flex items-center gap-6">
-              <Link to={"/"}>
+              <Link to={"/dashboard"}>
                 <button className="inline-flex items-center gap-2 px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-brand-500 shadow-theme-xs hover:bg-brand-600">
                   <svg
                     className="fill-current"
@@ -54,7 +54,7 @@ const PosHeader: React.FC = () => {
           </div>
           <div className="md:hidden block">
             <div className="flex items-center gap-6">
-              <Link to={"/"}>
+              <Link to={"/dashboard"}>
                 <button className="inline-flex items-center gap-2 px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-brand-500 shadow-theme-xs hover:bg-brand-600">
                   <svg
                     className="fill-current"
@@ -75,7 +75,7 @@ const PosHeader: React.FC = () => {
               </Link>
             </div>
           </div>
-          <Link to="/" className="lg:hidden">
+          <Link to="/dashboard" className="lg:hidden">
             <img
               className="dark:hidden"
               src="./images/logo/logo.svg"

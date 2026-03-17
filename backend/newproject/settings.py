@@ -9,6 +9,8 @@ DEBUG = True
     
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
+    "http://localhost:5174",
+    "http://localhost:5175",
     "https://inventa.imrtechsolutions.com",
 ]
 CORS_ALLOW_CREDENTIALS = True

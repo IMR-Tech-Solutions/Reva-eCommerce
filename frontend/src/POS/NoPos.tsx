@@ -1,5 +1,5 @@
 import GridShape from "../components/common/GridShape";
-import { Link } from "react-router";
+
 
 export default function NoPos() {
   return (
@@ -18,12 +18,12 @@ export default function NoPos() {
             Please Add Categories and Products to start with POS.
           </p>
 
-          <Link
-            to="/"
+          <a
+            href="/dashboard"
             className="inline-flex items-center justify-center rounded-lg border border-gray-300 bg-white px-5 py-3.5 text-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200"
           >
             Back to Home Page
-          </Link>
+          </a>
         </div>
       </div>
     </>

@@ -8,8 +8,16 @@ import { ecommerceLinks } from "../ecommerceRoutes";
 import { toast } from "react-toastify";
 import { getpubliccategoriesservice } from "../../services/categoryservices";
 import {
-  Menu, X, ShoppingCart, User, Search,
-  MapPin, Phone, ChevronDown, Globe, ChevronRight,
+  Menu,
+  X,
+  ShoppingCart,
+  User,
+  Search,
+  MapPin,
+  Phone,
+  ChevronDown,
+  Globe,
+  ChevronRight,
 } from "lucide-react";
 
 const NAV_LINKS = [
@@ -21,43 +29,54 @@ const NAV_LINKS = [
   { label: "Contact Us", href: "/contact" },
 ];
 
-const ColoredAvatarIcon = ({ className = "w-5 h-5" }: { className?: string }) => (
-  <svg viewBox="0 0 128 128" className={className} xmlns="http://www.w3.org/2000/svg">
-    <defs>
-      <mask id="body-mask">
-        <rect width="128" height="128" fill="white" />
-        <circle cx="64" cy="40" r="42" fill="black" />
-      </mask>
-    </defs>
-    <g mask="url(#body-mask)">
-      <path d="M 64 70 C 114 70 124 95 124 128 L 64 128 Z" fill="#1D80F0" />
-      <path d="M 64 70 C 14 70 4 95 4 128 L 64 128 Z" fill="#5B9CF8" />
-    </g>
-    <path d="M 64 4 C 83.88 4 100 20.12 100 40 C 100 59.88 83.88 76 64 76 Z" fill="#F4A261" />
-    <path d="M 64 4 C 44.12 4 28 20.12 28 40 C 28 59.88 44.12 76 64 76 Z" fill="#FAC486" />
-  </svg>
-);
 
-const ProfileDropdownComponent = ({ isOpen, onClose, navigate, onLogout }: { isOpen: boolean, onClose: () => void, navigate: any, onLogout: () => void }) => {
+const ProfileDropdownComponent = ({
+  isOpen,
+  onClose,
+  navigate,
+  onLogout,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  navigate: any;
+  onLogout: () => void;
+}) => {
   if (!isOpen) return null;
   return (
     <div className="absolute top-[120%] right-0 mt-1 w-48 bg-white shadow-xl rounded-lg border border-gray-100 z-[100] transition-all duration-300 before:absolute before:-top-1.5 before:right-6 before:w-4 before:h-4 before:bg-white before:rotate-45 before:border-l before:border-t before:border-gray-100 cursor-default">
       <div className="p-2 bg-white rounded-lg relative z-10 w-full shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] flex flex-col gap-1">
-        <button onClick={() => { onClose(); navigate(ecommerceLinks.UserProfile); }} className="w-full text-left px-4 py-2 text-sm font-bold text-gray-800 hover:bg-gray-100 transition-colors rounded">
+        <button
+          onClick={() => {
+            onClose();
+            navigate(ecommerceLinks.UserProfile);
+          }}
+          className="w-full text-left px-4 py-2 text-sm font-bold text-gray-800 hover:bg-gray-100 transition-colors rounded"
+        >
           My Profile
         </button>
-        <button onClick={() => { onClose(); navigate("/account-orders"); }} className="w-full text-left px-4 py-2 text-sm font-bold text-gray-800 hover:bg-gray-100 transition-colors rounded">
+        <button
+          onClick={() => {
+            onClose();
+            navigate("/account-orders");
+          }}
+          className="w-full text-left px-4 py-2 text-sm font-bold text-gray-800 hover:bg-gray-100 transition-colors rounded"
+        >
           My Orders
         </button>
         <div className="h-px bg-gray-100 my-0.5" />
-        <button onClick={() => { onClose(); onLogout(); }} className="w-full text-left px-4 py-2 text-sm font-bold text-red-600 hover:bg-red-50 transition-colors rounded">
+        <button
+          onClick={() => {
+            onClose();
+            onLogout();
+          }}
+          className="w-full text-left px-4 py-2 text-sm font-bold text-red-600 hover:bg-red-50 transition-colors rounded"
+        >
           Logout
         </button>
       </div>
     </div>
   );
 };
-
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -85,10 +104,15 @@ export default function Header() {
         if (isMounted) setCategories(data);
       } catch (error) {
         console.error("Failed to load categories header", error);
+        if (isMounted) {
+          toast.error("Failed to load categories. Please refresh the page.");
+        }
       }
     };
     fetchCats();
-    return () => { isMounted = false; };
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const categoryDropdownRef = useRef<HTMLDivElement>(null);
@@ -103,19 +127,28 @@ export default function Header() {
 
   useEffect(() => {
     document.body.style.overflow = menuOpen ? "hidden" : "";
-    return () => { document.body.style.overflow = ""; };
+    return () => {
+      document.body.style.overflow = "";
+    };
   }, [menuOpen]);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       const target = e.target as Node;
-      if (categoryDropdownRef.current && !categoryDropdownRef.current.contains(target))
+      if (
+        categoryDropdownRef.current &&
+        !categoryDropdownRef.current.contains(target)
+      )
         setCategoryOpen(false);
-      if (scrolledCategoryDropdownRef.current && !scrolledCategoryDropdownRef.current.contains(target))
+      if (
+        scrolledCategoryDropdownRef.current &&
+        !scrolledCategoryDropdownRef.current.contains(target)
+      )
         setScrolledCatOpen(false);
 
       // Improved profile dropdown handling
-      const insideProfile = profileDropdownRef.current?.contains(target) ||
+      const insideProfile =
+        profileDropdownRef.current?.contains(target) ||
         scrolledProfileDropdownRef.current?.contains(target) ||
         mobileProfileDropdownRef.current?.contains(target);
 
@@ -168,8 +201,15 @@ export default function Header() {
                     className="w-12 h-12 object-cover rounded shadow-sm border border-gray-100 flex-shrink-0"
                   />
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-800 truncate" title={item.product.name}>{item.product.name}</p>
-                    <p className="text-xs text-gray-500 mt-0.5">{item.qty} × ₹{item.product.price.toLocaleString()}</p>
+                    <p
+                      className="text-sm font-medium text-gray-800 truncate"
+                      title={item.product.name}
+                    >
+                      {item.product.name}
+                    </p>
+                    <p className="text-xs text-gray-500 mt-0.5">
+                      {item.qty} × ₹{item.product.price.toLocaleString()}
+                    </p>
                   </div>
                   <div className="text-sm font-bold text-[#1C1C1E]">
                     ₹{(item.product.price * item.qty).toLocaleString()}
@@ -180,22 +220,35 @@ export default function Header() {
 
             <div className="border-t border-gray-100 mt-3 pt-3 flex flex-col gap-2">
               <div className="flex justify-between items-center mb-2">
-                <span className="text-sm font-medium text-gray-500">Subtotal:</span>
+                <span className="text-sm font-medium text-gray-500">
+                  Subtotal:
+                </span>
                 <span className="text-sm font-bold text-[#1C1C1E]">
-                  ₹{cart.reduce((total: number, item: any) => total + item.product.price * item.qty, 0).toLocaleString()}
+                  ₹
+                  {cart
+                    .reduce(
+                      (total: number, item: any) =>
+                        total + item.product.price * item.qty,
+                      0,
+                    )
+                    .toLocaleString()}
                 </span>
               </div>
               <a
                 href="/cart"
                 className="w-full py-2.5 text-center text-sm font-bold text-[#1C1C1E] bg-gray-100 hover:bg-gray-200 rounded transition-colors"
-                onClick={(e) => { e.stopPropagation(); }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                }}
               >
                 View Full Cart
               </a>
               <a
                 href="/checkout"
                 className="w-full py-2.5 text-center text-sm font-bold text-[#1C1C1E] bg-[#FFB700] hover:bg-[#FFC933] rounded transition-colors"
-                onClick={(e) => { e.stopPropagation(); }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                }}
               >
                 Proceed to Checkout
               </a>
@@ -212,7 +265,10 @@ export default function Header() {
       {categories.map((cat) => (
         <button
           key={cat.slug || cat.id}
-          onClick={() => { handleCategoryClick(cat.slug); onClose(); }}
+          onClick={() => {
+            handleCategoryClick(cat.slug);
+            onClose();
+          }}
           className="block w-full text-left px-4 py-2.5 text-sm hover:bg-gray-100 hover:text-[#FFB700] transition-colors"
         >
           {cat.category_name}
@@ -227,11 +283,9 @@ export default function Header() {
           DESKTOP FULL HEADER — not sticky, scrolls away
       ══════════════════════════════════════════ */}
       <header className="w-full hidden md:block">
-
         {/* ── TOP BAR (dark) ── */}
         <div className="bg-[#1C1C1E] text-white px-4 py-3">
           <div className="max-w-7xl mx-auto flex items-center gap-4">
-
             {/* Logo */}
             <a href="/" className="flex-shrink-0 flex items-center group">
               <img
@@ -264,18 +318,32 @@ export default function Header() {
             {/* Contact */}
             <div className="hidden lg:flex items-center gap-6 flex-shrink-0 ml-auto">
               <button className="flex items-start gap-2.5 group text-left">
-                <MapPin size={20} className="text-[#FFB700] mt-0.5 flex-shrink-0 group-hover:scale-110 transition-transform" />
+                <MapPin
+                  size={20}
+                  className="text-[#FFB700] mt-0.5 flex-shrink-0 group-hover:scale-110 transition-transform"
+                />
                 <div>
-                  <p className="font-extrabold text-[#FFB700] text-sm uppercase tracking-wide leading-tight">Locations</p>
-                  <p className="text-white text-sm font-medium group-hover:text-[#FFC933] transition-colors leading-tight mt-0.5">Find a store</p>
+                  <p className="font-extrabold text-[#FFB700] text-sm uppercase tracking-wide leading-tight">
+                    Locations
+                  </p>
+                  <p className="text-white text-sm font-medium group-hover:text-[#FFC933] transition-colors leading-tight mt-0.5">
+                    Find a store
+                  </p>
                 </div>
               </button>
               <div className="w-px h-10 bg-[#2C2C2E]" />
               <div className="flex items-start gap-2.5">
-                <Phone size={20} className="text-[#FFB700] mt-0.5 flex-shrink-0" />
+                <Phone
+                  size={20}
+                  className="text-[#FFB700] mt-0.5 flex-shrink-0"
+                />
                 <div>
-                  <p className="font-extrabold text-[#FFB700] text-sm uppercase tracking-wide leading-tight">833-474-8531</p>
-                  <p className="text-white text-sm font-medium leading-tight mt-0.5">Sales & Support</p>
+                  <p className="font-extrabold text-[#FFB700] text-sm uppercase tracking-wide leading-tight">
+                    833-474-8531
+                  </p>
+                  <p className="text-white text-sm font-medium leading-tight mt-0.5">
+                    Sales & Support
+                  </p>
                 </div>
               </div>
             </div>
@@ -285,7 +353,6 @@ export default function Header() {
         {/* ── DESKTOP NAV BAR (yellow) ── */}
         <div className="bg-[#FFB700] px-4">
           <div className="max-w-7xl mx-auto flex items-center justify-between py-2">
-
             {/* Category dropdown */}
             <div className="relative" ref={categoryDropdownRef}>
               <button
@@ -294,21 +361,35 @@ export default function Header() {
                   ${categoryOpen ? "bg-[#FFB700] text-[#1C1C1E]" : "bg-[#1C1C1E] text-white hover:bg-white hover:text-[#1C1C1E]"}`}
               >
                 <div className="flex flex-col gap-[4px] w-4 flex-shrink-0">
-                  <span className={`block h-[2px] bg-current rounded-full transition-all duration-200 ${categoryOpen ? "rotate-45 translate-y-[6px]" : ""}`} />
-                  <span className={`block h-[2px] bg-current rounded-full transition-all duration-200 ${categoryOpen ? "opacity-0 scale-x-0" : ""}`} />
-                  <span className={`block h-[2px] bg-current rounded-full transition-all duration-200 ${categoryOpen ? "-rotate-45 -translate-y-[6px]" : ""}`} />
+                  <span
+                    className={`block h-[2px] bg-current rounded-full transition-all duration-200 ${categoryOpen ? "rotate-45 translate-y-[6px]" : ""}`}
+                  />
+                  <span
+                    className={`block h-[2px] bg-current rounded-full transition-all duration-200 ${categoryOpen ? "opacity-0 scale-x-0" : ""}`}
+                  />
+                  <span
+                    className={`block h-[2px] bg-current rounded-full transition-all duration-200 ${categoryOpen ? "-rotate-45 -translate-y-[6px]" : ""}`}
+                  />
                 </div>
                 <span>Shop by Category</span>
-                <ChevronDown size={14} className={`ml-auto transition-transform duration-200 ${categoryOpen ? "rotate-180" : ""}`} />
+                <ChevronDown
+                  size={14}
+                  className={`ml-auto transition-transform duration-200 ${categoryOpen ? "rotate-180" : ""}`}
+                />
               </button>
-              {categoryOpen && <CategoryList onClose={() => setCategoryOpen(false)} />}
+              {categoryOpen && (
+                <CategoryList onClose={() => setCategoryOpen(false)} />
+              )}
             </div>
 
             {/* Nav links */}
             <nav className="flex items-center gap-0.5">
               {NAV_LINKS.map(({ label, href }) => (
-                <a key={href} href={href}
-                  className="px-3.5 py-2 text-sm font-bold text-[#1C1C1E] hover:text-white rounded hover:bg-[#CC9200] transition-colors">
+                <a
+                  key={href}
+                  href={href}
+                  className="px-3.5 py-2 text-sm font-bold text-[#1C1C1E] hover:text-white rounded hover:bg-[#CC9200] transition-colors"
+                >
                   {label}
                 </a>
               ))}
@@ -319,24 +400,50 @@ export default function Header() {
               <div className="relative" ref={profileDropdownRef}>
                 {isAuthenticated ? (
                   <>
-                    <button onClick={() => setProfileOpen(!profileOpen)} className="flex items-center gap-1.5 px-3 py-2 text-sm font-bold text-[#1C1C1E] hover:text-white hover:bg-[#CC9200] rounded transition-colors">
-                      <ColoredAvatarIcon className="w-5 h-5" />
-                      <span className="hidden lg:inline">{user?.first_name || "User"}</span>
+                    <button
+                      onClick={() => setProfileOpen(!profileOpen)}
+                      className="flex items-center gap-1.5 px-3 py-2 text-sm font-bold text-[#1C1C1E] hover:text-white hover:bg-[#CC9200] rounded transition-colors"
+                    >
+                      {user?.user_image ? (
+                        <img 
+                          src={user.user_image} 
+                          alt="Profile" 
+                          className="w-6 h-6 rounded-full object-cover border border-white/50"
+                        />
+                      ) : (
+                        <User size={16} />
+                      )}
+                      <span className="hidden lg:inline">
+                        {user?.first_name || "User"}
+                      </span>
                     </button>
-                    <ProfileDropdownComponent isOpen={profileOpen} onClose={() => setProfileOpen(false)} navigate={navigate} onLogout={handleLogout} />
+                    <ProfileDropdownComponent
+                      isOpen={profileOpen}
+                      onClose={() => setProfileOpen(false)}
+                      navigate={navigate}
+                      onLogout={handleLogout}
+                    />
                   </>
                 ) : (
-                  <a href="/account" className="flex items-center gap-1.5 px-3 py-2 text-sm font-bold text-[#1C1C1E] hover:text-white hover:bg-[#CC9200] rounded transition-colors">
+                  <a
+                    href="/account"
+                    className="flex items-center gap-1.5 px-3 py-2 text-sm font-bold text-[#1C1C1E] hover:text-white hover:bg-[#CC9200] rounded transition-colors"
+                  >
                     <User size={16} />
                     <span className="hidden lg:inline">Account</span>
                   </a>
                 )}
               </div>
               <div className="relative group">
-                <a href="/cart" className="flex items-center gap-1.5 px-3 py-2 text-sm font-bold text-[#1C1C1E] hover:text-white hover:bg-[#CC9200] rounded transition-colors">
+                <a
+                  href="/cart"
+                  className="flex items-center gap-1.5 px-3 py-2 text-sm font-bold text-[#1C1C1E] hover:text-white hover:bg-[#CC9200] rounded transition-colors"
+                >
                   <ShoppingCart size={16} />
                   <span className="hidden lg:inline">Cart</span>
-                  <span className="bg-[#1C1C1E] group-hover:bg-white group-hover:text-[#1C1C1E] text-white text-xs font-bold px-2 py-0.5 rounded-full ml-1 transition-colors">{cartCount}</span>
+                  <span className="bg-[#1C1C1E] group-hover:bg-white group-hover:text-[#1C1C1E] text-white text-xs font-bold px-2 py-0.5 rounded-full ml-1 transition-colors">
+                    {cartCount}
+                  </span>
                 </a>
                 <CartDropdownComponent />
               </div>
@@ -356,22 +463,33 @@ export default function Header() {
           ${scrolled ? "translate-y-0" : "-translate-y-full"}`}
       >
         <div className="max-w-7xl mx-auto w-full flex items-center gap-3 px-4 py-2.5">
-
           {/* Logo (compact) */}
           <a href="/" className="flex-shrink-0">
-            <img src="/ecommerce-images/logo.png" alt="Logo" className="h-9 w-auto object-contain" />
+            <img
+              src="/ecommerce-images/logo.png"
+              alt="Logo"
+              className="h-9 w-auto object-contain"
+            />
           </a>
 
           {/* Category dropdown */}
-          <div className="relative flex-shrink-0" ref={scrolledCategoryDropdownRef}>
+          <div
+            className="relative flex-shrink-0"
+            ref={scrolledCategoryDropdownRef}
+          >
             <button
               onClick={() => setScrolledCatOpen((prev) => !prev)}
               className="flex items-center gap-2 text-sm font-black uppercase tracking-wide bg-[#1C1C1E] text-white hover:bg-white hover:text-[#1C1C1E] px-4 py-2.5 rounded transition-all duration-200 whitespace-nowrap"
             >
-              <ChevronDown size={14} className={`transition-transform duration-200 ${scrolledCatOpen ? "rotate-180" : ""}`} />
+              <ChevronDown
+                size={14}
+                className={`transition-transform duration-200 ${scrolledCatOpen ? "rotate-180" : ""}`}
+              />
               Shop by Category
             </button>
-            {scrolledCatOpen && <CategoryList onClose={() => setScrolledCatOpen(false)} />}
+            {scrolledCatOpen && (
+              <CategoryList onClose={() => setScrolledCatOpen(false)} />
+            )}
           </div>
 
           {/* Search bar */}
@@ -396,30 +514,56 @@ export default function Header() {
 
           {/* Account + Cart */}
           <div className="flex items-center gap-1 flex-shrink-0 ml-auto">
-            <div className="relative flex-shrink-0" ref={scrolledProfileDropdownRef}>
+            <div
+              className="relative flex-shrink-0"
+              ref={scrolledProfileDropdownRef}
+            >
               {isAuthenticated ? (
                 <>
-                  <button onClick={() => setScrolledProfileOpen(!scrolledProfileOpen)} className="flex items-center gap-1.5 px-3 py-2 text-sm font-bold text-[#1C1C1E] hover:text-white hover:bg-[#CC9200] rounded transition-colors whitespace-nowrap">
-                    <ColoredAvatarIcon className="w-5 h-5" />
-                    <span className="hidden lg:inline">{user?.first_name || "User"}</span>
+                  <button
+                    onClick={() => setScrolledProfileOpen(!scrolledProfileOpen)}
+                    className="flex items-center gap-1.5 px-3 py-2 text-sm font-bold text-[#1C1C1E] hover:text-white hover:bg-[#CC9200] rounded transition-colors whitespace-nowrap"
+                  >
+                    {user?.user_image ? (
+                      <img 
+                        src={user.user_image} 
+                        alt="Profile" 
+                        className="w-6 h-6 rounded-full object-cover border border-white/50"
+                      />
+                    ) : (
+                      <User size={16} />
+                    )}
+                    <span className="hidden lg:inline">
+                      {user?.first_name || "User"}
+                    </span>
                   </button>
-                  <ProfileDropdownComponent isOpen={scrolledProfileOpen} onClose={() => setScrolledProfileOpen(false)} navigate={navigate} onLogout={handleLogout} />
+                  <ProfileDropdownComponent
+                    isOpen={scrolledProfileOpen}
+                    onClose={() => setScrolledProfileOpen(false)}
+                    navigate={navigate}
+                    onLogout={handleLogout}
+                  />
                 </>
               ) : (
-                <a href="/user-shop-profile" className="flex items-center gap-1.5 px-3 py-2 text-sm font-bold text-[#1C1C1E] hover:text-white hover:bg-[#CC9200] rounded transition-colors whitespace-nowrap">
+                <a
+                  href="/user-shop-profile"
+                  className="flex items-center gap-1.5 px-3 py-2 text-sm font-bold text-[#1C1C1E] hover:text-white hover:bg-[#CC9200] rounded transition-colors whitespace-nowrap"
+                >
                   <User size={16} />
                   <span>My Account</span>
                 </a>
               )}
             </div>
             <div className="relative group">
-              <a href="/cart" className="flex items-center gap-1.5 px-3 py-2 text-sm font-bold text-[#1C1C1E] hover:text-white hover:bg-[#CC9200] rounded transition-colors whitespace-nowrap">
+              <a
+                href="/cart"
+                className="flex items-center gap-1.5 px-3 py-2 text-sm font-bold text-[#1C1C1E] hover:text-white hover:bg-[#CC9200] rounded transition-colors whitespace-nowrap"
+              >
                 <ShoppingCart size={16} />
                 <span>Cart ({cartCount})</span>
               </a>
               <CartDropdownComponent />
             </div>
-
           </div>
         </div>
       </div>
@@ -427,9 +571,15 @@ export default function Header() {
       {/* ══════════════════════════════════════════
           MOBILE TOP BAR — sticky
       ══════════════════════════════════════════ */}
-      <div className={`md:hidden bg-[#FFB700] px-4 py-2.5 flex items-center justify-between sticky top-0 z-50 transition-shadow duration-300 ${scrolled ? "shadow-2xl" : "shadow-md"}`}>
+      <div
+        className={`md:hidden bg-[#FFB700] px-4 py-2.5 flex items-center justify-between sticky top-0 z-50 transition-shadow duration-300 ${scrolled ? "shadow-2xl" : "shadow-md"}`}
+      >
         <a href="/" className="flex-shrink-0">
-          <img src="/ecommerce-images/logo.png" alt="Logo" className="h-9 w-auto object-contain" />
+          <img
+            src="/ecommerce-images/logo.png"
+            alt="Logo"
+            className="h-9 w-auto object-contain"
+          />
         </a>
         <div className="flex items-center gap-1">
           <button
@@ -448,19 +598,38 @@ export default function Header() {
                   onClick={() => setProfileOpen(!profileOpen)}
                   className="p-2 rounded hover:bg-[#CC9200] transition-colors text-[#1C1C1E] flex items-center"
                 >
-                  <ColoredAvatarIcon className="w-6 h-6" />
+                  {user?.user_image ? (
+                    <img 
+                      src={user.user_image} 
+                      alt="Profile" 
+                      className="w-7 h-7 rounded-full object-cover border border-white/50"
+                    />
+                  ) : (
+                    <User size={20} />
+                  )}
                 </button>
                 {/* Reusing the desktop dropdown component for mobile */}
-                <ProfileDropdownComponent isOpen={profileOpen} onClose={() => setProfileOpen(false)} navigate={navigate} onLogout={handleLogout} />
+                <ProfileDropdownComponent
+                  isOpen={profileOpen}
+                  onClose={() => setProfileOpen(false)}
+                  navigate={navigate}
+                  onLogout={handleLogout}
+                />
               </>
             ) : (
-              <a href="/user-shop-profile" className="p-2 rounded hover:bg-[#CC9200] transition-colors text-[#1C1C1E] flex items-center">
+              <a
+                href="/user-shop-profile"
+                className="p-2 rounded hover:bg-[#CC9200] transition-colors text-[#1C1C1E] flex items-center"
+              >
                 <User size={20} />
               </a>
             )}
           </div>
 
-          <a href="/cart" className="relative p-2 rounded hover:bg-[#CC9200] transition-colors text-[#1C1C1E]">
+          <a
+            href="/cart"
+            className="relative p-2 rounded hover:bg-[#CC9200] transition-colors text-[#1C1C1E]"
+          >
             <ShoppingCart size={20} />
             {cartCount > 0 && (
               <span className="absolute top-0.5 right-0.5 bg-red-500 text-white text-[8px] font-black w-3.5 h-3.5 rounded-full flex items-center justify-center">
@@ -479,7 +648,9 @@ export default function Header() {
       </div>
 
       {/* Mobile search dropdown */}
-      <div className={`md:hidden bg-[#1C1C1E] overflow-hidden transition-all duration-300 ease-in-out ${searchOpen ? "max-h-20 opacity-100" : "max-h-0 opacity-0"}`}>
+      <div
+        className={`md:hidden bg-[#1C1C1E] overflow-hidden transition-all duration-300 ease-in-out ${searchOpen ? "max-h-20 opacity-100" : "max-h-0 opacity-0"}`}
+      >
         <div className="px-4 py-3 flex items-center gap-2">
           <div className="flex flex-1 items-center rounded-lg overflow-hidden border-2 border-transparent focus-within:border-[#FFB700] bg-[#2C2C2E]">
             <input
@@ -492,7 +663,10 @@ export default function Header() {
               <Search size={15} />
             </button>
           </div>
-          <button onClick={() => setSearchOpen(false)} className="text-gray-500 hover:text-white transition-colors p-1">
+          <button
+            onClick={() => setSearchOpen(false)}
+            className="text-gray-500 hover:text-white transition-colors p-1"
+          >
             <X size={18} />
           </button>
         </div>
@@ -500,7 +674,10 @@ export default function Header() {
 
       {/* ── SIDEBAR OVERLAY ── */}
       {menuOpen && (
-        <div className="fixed inset-0 bg-black/60 z-50 md:hidden backdrop-blur-sm" onClick={() => setMenuOpen(false)} />
+        <div
+          className="fixed inset-0 bg-black/60 z-50 md:hidden backdrop-blur-sm"
+          onClick={() => setMenuOpen(false)}
+        />
       )}
 
       {/* ── SIDEBAR DRAWER ── */}
@@ -511,9 +688,17 @@ export default function Header() {
       >
         <div className="bg-[#FFB700] px-4 py-3 flex items-center justify-between flex-shrink-0">
           <a href="/" onClick={() => setMenuOpen(false)}>
-            <img src="/ecommerce-images/logo.png" alt="Logo" className="h-9 w-auto object-contain" />
+            <img
+              src="/ecommerce-images/logo.png"
+              alt="Logo"
+              className="h-9 w-auto object-contain"
+            />
           </a>
-          <button onClick={() => setMenuOpen(false)} className="p-1.5 rounded hover:bg-[#CC9200] transition-colors text-[#1C1C1E]" aria-label="Close menu">
+          <button
+            onClick={() => setMenuOpen(false)}
+            className="p-1.5 rounded hover:bg-[#CC9200] transition-colors text-[#1C1C1E]"
+            aria-label="Close menu"
+          >
             <X size={22} />
           </button>
         </div>
@@ -528,13 +713,19 @@ export default function Header() {
                 <Menu size={15} />
                 Shop by Category
               </div>
-              <ChevronDown size={14} className={`opacity-70 transition-transform duration-200 ${mobileCatOpen ? "rotate-180" : ""}`} />
+              <ChevronDown
+                size={14}
+                className={`opacity-70 transition-transform duration-200 ${mobileCatOpen ? "rotate-180" : ""}`}
+              />
             </button>
             {mobileCatOpen && (
               <div className="mt-2 bg-[#1C1C1E] border border-[#2C2C2E] rounded-lg max-h-72 overflow-y-auto">
                 {categories.map((cat) => (
-                  <button key={cat.slug || cat.id} onClick={() => handleCategoryClick(cat.slug)}
-                    className="w-full text-left px-4 py-2.5 text-sm text-gray-200 hover:bg-[#2C2C2E] hover:text-[#FFB700] transition-colors">
+                  <button
+                    key={cat.slug || cat.id}
+                    onClick={() => handleCategoryClick(cat.slug)}
+                    className="w-full text-left px-4 py-2.5 text-sm text-gray-200 hover:bg-[#2C2C2E] hover:text-[#FFB700] transition-colors"
+                  >
                     {cat.category_name}
                   </button>
                 ))}
@@ -543,13 +734,20 @@ export default function Header() {
           </div>
 
           <div className="px-3 py-3 flex flex-col gap-0.5">
-            <p className="text-gray-500 text-xs font-bold uppercase tracking-widest px-3 mb-2">Navigation</p>
+            <p className="text-gray-500 text-xs font-bold uppercase tracking-widest px-3 mb-2">
+              Navigation
+            </p>
             {NAV_LINKS.map(({ label, href }) => (
-              <a key={href} href={href}
+              <a
+                key={href}
+                href={href}
                 className="flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-semibold text-gray-300 hover:bg-[#2C2C2E] hover:text-[#FFB700] transition-colors group"
                 onClick={() => setMenuOpen(false)}
               >
-                <ChevronRight size={14} className="text-[#FFB700] opacity-60 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
+                <ChevronRight
+                  size={14}
+                  className="text-[#FFB700] opacity-60 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all"
+                />
                 {label}
               </a>
             ))}

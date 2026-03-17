@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { ArrowRight, ChevronDown } from "lucide-react";
+import { toast } from "react-toastify";
 import { getpubliccategoriesservice } from "../../../services/categoryservices";
 
 // ── Types ──
@@ -87,11 +88,14 @@ const brandOptions: string[] = [
 const FeaturedSection = () => {
   const navigate = useNavigate();
 
-  const [selectedCategory, setSelectedCategory] = useState<string>("All Categories");
+  const [selectedCategory, setSelectedCategory] =
+    useState<string>("All Categories");
   const [selectedBrand, setSelectedBrand] = useState<string>("All Brands");
   const [sku, setSku] = useState<string>("");
   const [categories, setCategories] = useState<any[]>([]);
-  const [categoryOptions, setCategoryOptions] = useState<string[]>(initialCategoryOptions);
+  const [categoryOptions, setCategoryOptions] = useState<string[]>(
+    initialCategoryOptions,
+  );
 
   useEffect(() => {
     let isMounted = true;
@@ -100,19 +104,29 @@ const FeaturedSection = () => {
         const data = await getpubliccategoriesservice();
         if (isMounted) {
           setCategories(data);
-          setCategoryOptions(["All Categories", ...data.map((c: any) => c.category_name)]);
+          setCategoryOptions([
+            "All Categories",
+            ...data.map((c: any) => c.category_name),
+          ]);
         }
       } catch (error) {
         console.error("Failed to fetch featured categories", error);
+        if (isMounted) {
+          toast.error("Failed to load categories. Please refresh the page.");
+        }
       }
     };
     fetchCats();
-    return () => { isMounted = false; };
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const handleShopNow = () => {
     if (selectedCategory !== "All Categories") {
-      const matched = categories.find((c) => c.category_name === selectedCategory);
+      const matched = categories.find(
+        (c) => c.category_name === selectedCategory,
+      );
       if (matched) navigate(`/category/${matched.slug}`);
     } else {
       navigate("/e-commerceshop");
@@ -228,15 +242,17 @@ const FeaturedSection = () => {
                   </span>
                 )}
                 <h3
-                  className={`font-black text-2xl md:text-3xl leading-tight ${banner.id === 3 ? "text-[#1C1C1E]" : "text-white"
-                    }`}
+                  className={`font-black text-2xl md:text-3xl leading-tight ${
+                    banner.id === 3 ? "text-[#1C1C1E]" : "text-white"
+                  }`}
                 >
                   {banner.title}
                 </h3>
                 {banner.subtitle && (
                   <p
-                    className={`font-bold text-base md:text-lg leading-tight ${banner.id === 3 ? "text-[#1C1C1E]" : "text-[#FFB700]"
-                      }`}
+                    className={`font-bold text-base md:text-lg leading-tight ${
+                      banner.id === 3 ? "text-[#1C1C1E]" : "text-[#FFB700]"
+                    }`}
                   >
                     {banner.subtitle}
                   </p>
@@ -252,10 +268,11 @@ const FeaturedSection = () => {
                     navigate(banner.href);
                   }}
                   className={`mt-2 inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-wide px-4 py-2 rounded transition-all duration-200 w-fit group-hover:gap-2.5
-            ${banner.id === 3
-                      ? "bg-[#1C1C1E] text-white hover:bg-[#2C2C2E]"
-                      : "bg-[#FFB700] text-[#1C1C1E] hover:bg-[#FFC933]"
-                    }`}
+            ${
+              banner.id === 3
+                ? "bg-[#1C1C1E] text-white hover:bg-[#2C2C2E]"
+                : "bg-[#FFB700] text-[#1C1C1E] hover:bg-[#FFC933]"
+            }`}
                 >
                   {banner.cta}
                   <ArrowRight
@@ -276,8 +293,9 @@ const FeaturedSection = () => {
 
               {/* Decorative circle */}
               <div
-                className={`absolute -right-6 -bottom-6 w-32 h-32 rounded-full opacity-10 ${banner.id === 3 ? "bg-[#1C1C1E]" : "bg-[#FFB700]"
-                  }`}
+                className={`absolute -right-6 -bottom-6 w-32 h-32 rounded-full opacity-10 ${
+                  banner.id === 3 ? "bg-[#1C1C1E]" : "bg-[#FFB700]"
+                }`}
               />
             </div>
           ))}
@@ -301,10 +319,14 @@ const FeaturedSection = () => {
 
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-3 gap-3">
             {categories.slice(0, 6).map((cat) => {
-              const imageBaseUrl = import.meta.env.VITE_API_BASE_URL?.replace('/api/', '') || "";
+              const imageBaseUrl =
+                import.meta.env.VITE_API_BASE_URL?.replace("/api/", "") || "";
 
               const getImageUrl = () => {
-                if (cat.category_image && cat.category_image !== "/media/category_images/default.png") {
+                if (
+                  cat.category_image &&
+                  cat.category_image !== "/media/category_images/default.png"
+                ) {
                   return cat.category_image.startsWith("http")
                     ? cat.category_image
                     : `${imageBaseUrl}${cat.category_image}`;

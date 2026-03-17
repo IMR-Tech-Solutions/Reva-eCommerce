@@ -21,7 +21,7 @@ type DealProduct = {
 };
 
 // ── Deal ends date — set your target date here ──
-const DEAL_END_DATE = new Date("2026-03-15T23:59:59");
+const DEAL_END_DATE = new Date("2026-04-15T23:59:59");
 
 // ── Products ──
 const dealProducts: DealProduct[] = [
@@ -115,8 +115,8 @@ const BestDeals = () => {
     const diff = DEAL_END_DATE.getTime() - new Date().getTime();
     if (diff <= 0) return { days: 0, hours: 0, minutes: 0, seconds: 0 };
     return {
-      days:    Math.floor(diff / (1000 * 60 * 60 * 24)),
-      hours:   Math.floor((diff / (1000 * 60 * 60)) % 24),
+      days: Math.floor(diff / (1000 * 60 * 60 * 24)),
+      hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
       minutes: Math.floor((diff / (1000 * 60)) % 60),
       seconds: Math.floor((diff / 1000) % 60),
     };
@@ -157,9 +157,9 @@ const BestDeals = () => {
             </span>
           ) : (
             <div className="flex items-end gap-2">
-              <CountTile value={timeLeft.days}    label="Days"    />
+              <CountTile value={timeLeft.days} label="Days" />
               <Colon />
-              <CountTile value={timeLeft.hours}   label="Hour"    />
+              <CountTile value={timeLeft.hours} label="Hour" />
               <Colon />
               <CountTile value={timeLeft.minutes} label="Minutes" />
               <Colon />

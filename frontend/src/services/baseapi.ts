@@ -1,4 +1,5 @@
 import axios from "axios";
+import { toast } from "react-toastify";
 import {
   getToken,
   getRefreshToken,
@@ -7,7 +8,7 @@ import {
   getEcommerceToken,
   getEcommerceRefreshToken,
   setEcommerceAccessToken,
-  removeEcommerceTokens
+  removeEcommerceTokens,
 } from "../authentication/auth";
 import { isEcommerceRoute } from "../ecommerce-pages/ecommerceRoutes";
 
@@ -24,16 +25,16 @@ api.interceptors.request.use(
     // Determine active route
     const currentPath = window.location.pathname;
     const isEcommerce = isEcommerceRoute(currentPath);
-    
+
     // Select the appropriate token
     const token = isEcommerce ? getEcommerceToken() : getToken();
-    
+
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => Promise.reject(error),
 );
 
 // Handle 401 by trying refresh token
@@ -52,24 +53,28 @@ api.interceptors.response.use(
       try {
         const currentPath = window.location.pathname;
         const isEcommerce = isEcommerceRoute(currentPath);
-        
-        const refresh = isEcommerce ? getEcommerceRefreshToken() : getRefreshToken();
-        
+
+        const refresh = isEcommerce
+          ? getEcommerceRefreshToken()
+          : getRefreshToken();
+
         if (!refresh) throw new Error("Missing refresh token");
         const res = await axios.post(`${BASE_URL}token/refresh/`, {
           refresh,
         });
         const newAccess = res.data.access;
-        
+
         if (isEcommerce) {
           setEcommerceAccessToken(newAccess);
         } else {
           setAccessToken(newAccess);
         }
-        
+
         originalRequest.headers.Authorization = `Bearer ${newAccess}`;
         return api(originalRequest);
       } catch (err) {
+        console.error("Token refresh failed", err);
+        toast.error("Session expired. Please login again.");
         const currentPath = window.location.pathname;
         if (isEcommerceRoute(currentPath)) {
           removeEcommerceTokens();
@@ -80,7 +85,7 @@ api.interceptors.response.use(
     }
 
     return Promise.reject(error);
-  }
+  },
 );
 
 export default api;

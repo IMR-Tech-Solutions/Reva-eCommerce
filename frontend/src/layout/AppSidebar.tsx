@@ -250,7 +250,7 @@ const AppSidebar: React.FC = () => {
           !isExpanded && !isHovered ? "lg:justify-center" : "justify-start"
         }`}
       >
-        <Link to="/" onClick={() => isMobileOpen && closeSidebar()}>
+        <Link to="/dashboard" onClick={() => isMobileOpen && closeSidebar()}>
           {isExpanded || isHovered || isMobileOpen ? (
             <>
               <img

@@ -5,6 +5,7 @@ import { Table, Input, Button, Space, Popconfirm } from "antd";
 import ButtonComponentCard from "../../Admin/Components/ButtonComponentCard";
 import {
   getmycustomersservice,
+  getallcustomersservice,
   deletecustomerservice,
   getsinglecustomerservice,
 } from "../../services/customerservices";
@@ -14,10 +15,12 @@ import EditCustomer from "./EditCustomer";
 import { CustomerData } from "../../types/types";
 import { handleError } from "../../utils/handleError";
 import { all_routes } from "../../Router/allroutes";
+import { useSelector } from "react-redux";
 
 const { Search } = Input;
 
 const Customers = () => {
+  const { user } = useSelector((state: any) => state.user);
   const [customers, setCustomers] = useState<CustomerData[]>([]);
   const [filteredCustomers, setFilteredCustomers] = useState<CustomerData[]>(
     []
@@ -32,7 +35,8 @@ const Customers = () => {
   const fetchCustomers = async () => {
     setLoading(true);
     try {
-      const data = await getmycustomersservice();
+      const isAdmin = user?.role?.toLowerCase() === "admin";
+      const data = isAdmin ? await getallcustomersservice() : await getmycustomersservice();
       setCustomers(data);
       setFilteredCustomers(data);
     } catch (err) {
@@ -44,8 +48,10 @@ const Customers = () => {
   };
 
   useEffect(() => {
-    fetchCustomers();
-  }, []);
+    if (user) {
+      fetchCustomers();
+    }
+  }, [user]);
 
   const handleSearch = (value: string) => {
     const filtered = customers.filter(
@@ -107,7 +113,7 @@ const Customers = () => {
       render: (url: string) =>
         url ? (
           <img
-            src={`${import.meta.env.VITE_API_IMG_URL}${url}`}
+            src={url?.startsWith('http') ? url : `${import.meta.env.VITE_API_IMG_URL}${url}`}
             alt="Customer"
             style={{
               width: "40px",

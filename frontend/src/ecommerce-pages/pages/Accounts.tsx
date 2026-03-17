@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useSearchParams } from "react-router";
 import { loginService, registerService } from "../../services/authservices";
 import { requestPasswordResetService, confirmPasswordResetService } from "../../services/resetpasswordservices";
 import { setEcommerceTokens, removeEcommerceTokens } from "../../authentication/auth";
@@ -32,6 +33,8 @@ interface FormErrors {
 }
 
 function Accounts() {
+  const [searchParams] = useSearchParams();
+  const redirectPath = searchParams.get("redirect") || "/";
   const [isLoginMode, setIsLoginMode] = useState<boolean>(true);
   const [formData, setFormData] = useState<FormData>({
     name: "",
@@ -103,7 +106,7 @@ function Accounts() {
           password: formData.password,
         });
         setEcommerceTokens({ access: data.access, refresh: data.refresh });
-        
+
         // Enforce Customer role (Block Admin Role ID 1)
         try {
           const userRes = await api.get("me/");
@@ -115,12 +118,12 @@ function Accounts() {
           }
           toast.success("Login successful");
           setTimeout(() => {
-            window.location.href = "/";
+            window.location.href = redirectPath;
           }, 2000);
         } catch (err) {
           toast.success("Login successful");
           setTimeout(() => {
-            window.location.href = "/";
+            window.location.href = redirectPath;
           }, 2000);
         }
       } else {
@@ -128,7 +131,7 @@ function Accounts() {
         const names = formData.name.trim().split(" ");
         const first_name = names[0];
         const last_name = names.length > 1 ? names.slice(1).join(" ") : "";
-        
+
         await registerService({
           email: formData.email,
           password: formData.password,
@@ -141,7 +144,7 @@ function Accounts() {
           postal_code: formData.postal_code,
           address: formData.address,
         });
-        
+
         toast.success("Account created successfully. Please login.");
         // Page refresh as requested, will default back to login mode
         setTimeout(() => {
@@ -213,7 +216,7 @@ function Accounts() {
       toast.error("New passwords do not match!");
       return;
     }
-    
+
     setIsLoading(true);
     try {
       await confirmPasswordResetService({
@@ -317,7 +320,7 @@ function Accounts() {
 
         {/* ── Card ── */}
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8">
-          
+
           {forgotStep === "request" && (
             <form onSubmit={handleRequestResetToken} noValidate>
               <div className="mb-5">
@@ -401,242 +404,242 @@ function Accounts() {
           {forgotStep === "none" && (
             <form onSubmit={handleSubmit} noValidate>
 
-            {/* ── SIGN UP ONLY FIELDS ── */}
-            {!isLoginMode && (
-              <>
-                {/* Full Name */}
-                <div className="mb-5">
-                  <Label text="Full Name" />
-                  <div className="relative">
-                    <FieldIcon>
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                          d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                      </svg>
-                    </FieldIcon>
-                    <input type="text" name="name" value={formData.name}
-                      onChange={handleChange} placeholder="John Doe"
-                      className={getInputClass("name")} />
-                  </div>
-                  {errors.name && <ErrorMsg msg={errors.name} />}
-                </div>
-              </>
-            )}
-
-            {/* ── Email ── */}
-            <div className="mb-5">
-              <Label text="Email Address" />
-              <div className="relative">
-                <FieldIcon>
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                      d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                  </svg>
-                </FieldIcon>
-                <input type="email" name="email" value={formData.email}
-                  onChange={handleChange} placeholder="john@example.com"
-                  className={getInputClass("email")} />
-              </div>
-              {errors.email && <ErrorMsg msg={errors.email} />}
-            </div>
-
-            {/* ── Phone (Sign Up only) ── */}
-            {!isLoginMode && (
-              <div className="mb-5">
-                <Label text="Phone Number" />
-                <div className="relative">
-                  <FieldIcon>
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                        d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                    </svg>
-                  </FieldIcon>
-                  <input type="tel" name="phone" value={formData.phone}
-                    onChange={handleChange} placeholder="+91 98765 43210"
-                    className={getInputClass("phone")} />
-                </div>
-                {errors.phone && <ErrorMsg msg={errors.phone} />}
-              </div>
-            )}
-
-            {/* ── Password ── */}
-            <div className="mb-5">
-              <div className="flex justify-between mb-1.5">
-                <Label text="Password" />
-                {isLoginMode && (
-                  <button type="button" onClick={() => { setForgotStep("request"); setErrors({}); }} className="text-xs font-semibold cursor-pointer hover:underline"
-                    style={{ color: "var(--color-primary-dark)" }}>
-                    Forgot?
-                  </button>
-                )}
-              </div>
-              <div className="relative">
-                <FieldIcon>
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                      d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                  </svg>
-                </FieldIcon>
-                <input type={showPassword ? "text" : "password"} name="password"
-                  value={formData.password} onChange={handleChange}
-                  placeholder="Min. 6 characters"
-                  className={getInputClass("password", true)} />
-                <TogglePasswordBtn show={showPassword} onToggle={() => setShowPassword(v => !v)} />
-              </div>
-              {errors.password && <ErrorMsg msg={errors.password} />}
-            </div>
-
-            {/* ── Confirm Password (Sign Up only) ── */}
-            {!isLoginMode && (
-              <div className="mb-5">
-                <Label text="Confirm Password" />
-                <div className="relative">
-                  <FieldIcon>
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                        d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                    </svg>
-                  </FieldIcon>
-                  <input type={showConfirmPassword ? "text" : "password"} name="confirmPassword"
-                    value={formData.confirmPassword} onChange={handleChange}
-                    placeholder="Re-enter your password"
-                    className={getInputClass("confirmPassword", true)} />
-                  <TogglePasswordBtn show={showConfirmPassword} onToggle={() => setShowConfirmPassword(v => !v)} />
-                </div>
-                {errors.confirmPassword && <ErrorMsg msg={errors.confirmPassword} />}
-              </div>
-            )}
-
-            {/* ── ADDRESS FIELDS (Sign Up only) ── */}
-            {!isLoginMode && (
-              <>
-                {/* Divider */}
-                <div className="flex items-center gap-3 my-5">
-                  <div className="flex-1 h-px bg-gray-100" />
-                  <span className="text-xs font-semibold tracking-wide uppercase"
-                    style={{ color: "var(--color-gray-light)" }}>
-                    Address Details (Optional)
-                  </span>
-                  <div className="flex-1 h-px bg-gray-100" />
-                </div>
-                {/* Full Address — full width */}
-                <div className="mb-5">
-                  <Label text="Full Address" />
-                  <div className="relative">
-                    <FieldIcon>
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                          d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                      </svg>
-                    </FieldIcon>
-                    <input type="text" name="address" value={formData.address}
-                      onChange={handleChange} placeholder="123, Street Name, Area"
-                      className={getInputClass("address")} />
-                  </div>
-                  {errors.address && <ErrorMsg msg={errors.address} />}
-                </div>
-
-                {/* Country + State — 2 col on sm+ */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
-                  <div>
-                    <Label text="Country" />
-                    <div className="relative">
-                      <FieldIcon>
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                            d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                      </FieldIcon>
-                      <input type="text" name="country" value={formData.country}
-                        onChange={handleChange} placeholder="India"
-                        className={getInputClass("country")} />
-                    </div>
-                    {errors.country && <ErrorMsg msg={errors.country} />}
-                  </div>
-
-                  <div>
-                    <Label text="State" />
-                    <div className="relative">
-                      <FieldIcon>
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                            d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                        </svg>
-                      </FieldIcon>
-                      <input type="text" name="state" value={formData.state}
-                        onChange={handleChange} placeholder="Maharashtra"
-                        className={getInputClass("state")} />
-                    </div>
-                    {errors.state && <ErrorMsg msg={errors.state} />}
-                  </div>
-                </div>
-
-                {/* City + Postal Code — 2 col on sm+ */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
-                  <div>
-                    <Label text="City" />
-                    <div className="relative">
-                      <FieldIcon>
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                            d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                        </svg>
-                      </FieldIcon>
-                      <input type="text" name="city" value={formData.city}
-                        onChange={handleChange} placeholder="Pune"
-                        className={getInputClass("city")} />
-                    </div>
-                    {errors.city && <ErrorMsg msg={errors.city} />}
-                  </div>
-
-                  <div>
-                    <Label text="Postal Code" />
-                    <div className="relative">
-                      <FieldIcon>
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                            d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14" />
-                        </svg>
-                      </FieldIcon>
-                      <input type="text" name="postal_code" value={formData.postal_code}
-                        onChange={handleChange} placeholder="411001"
-                        className={getInputClass("postal_code")} />
-                    </div>
-                    {errors.postal_code && <ErrorMsg msg={errors.postal_code} />}
-                  </div>
-                </div>
-
-                
-              </>
-            )}
-
-            {/* ── Submit ── */}
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full font-bold py-3 rounded-lg text-sm sm:text-base disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 transition-colors mt-2"
-              style={{ backgroundColor: "var(--color-primary)", color: "var(--color-secondary)" }}
-              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "var(--color-primary-light)")}
-              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "var(--color-primary)")}
-              onMouseDown={(e) => (e.currentTarget.style.backgroundColor = "var(--color-primary-dark)")}
-              onMouseUp={(e) => (e.currentTarget.style.backgroundColor = "var(--color-primary-light)")}
-            >
-              {isLoading ? (
+              {/* ── SIGN UP ONLY FIELDS ── */}
+              {!isLoginMode && (
                 <>
-                  <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                  </svg>
-                  {isLoginMode ? "Signing In..." : "Creating Account..."}
+                  {/* Full Name */}
+                  <div className="mb-5">
+                    <Label text="Full Name" />
+                    <div className="relative">
+                      <FieldIcon>
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        </svg>
+                      </FieldIcon>
+                      <input type="text" name="name" value={formData.name}
+                        onChange={handleChange} placeholder="John Doe"
+                        className={getInputClass("name")} />
+                    </div>
+                    {errors.name && <ErrorMsg msg={errors.name} />}
+                  </div>
                 </>
-              ) : (
-                isLoginMode ? "Sign In" : "Create Account"
               )}
-            </button>
 
-          </form>
+              {/* ── Email ── */}
+              <div className="mb-5">
+                <Label text="Email Address" />
+                <div className="relative">
+                  <FieldIcon>
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                        d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                  </FieldIcon>
+                  <input type="email" name="email" value={formData.email}
+                    onChange={handleChange} placeholder="john@example.com"
+                    className={getInputClass("email")} />
+                </div>
+                {errors.email && <ErrorMsg msg={errors.email} />}
+              </div>
+
+              {/* ── Phone (Sign Up only) ── */}
+              {!isLoginMode && (
+                <div className="mb-5">
+                  <Label text="Phone Number" />
+                  <div className="relative">
+                    <FieldIcon>
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                          d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                      </svg>
+                    </FieldIcon>
+                    <input type="tel" name="phone" value={formData.phone}
+                      onChange={handleChange} placeholder="+91 98765 43210"
+                      className={getInputClass("phone")} />
+                  </div>
+                  {errors.phone && <ErrorMsg msg={errors.phone} />}
+                </div>
+              )}
+
+              {/* ── Password ── */}
+              <div className="mb-5">
+                <div className="flex justify-between mb-1.5">
+                  <Label text="Password" />
+                  {isLoginMode && (
+                    <button type="button" onClick={() => { setForgotStep("request"); setErrors({}); }} className="text-xs font-semibold cursor-pointer hover:underline"
+                      style={{ color: "var(--color-primary-dark)" }}>
+                      Forgot?
+                    </button>
+                  )}
+                </div>
+                <div className="relative">
+                  <FieldIcon>
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                        d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
+                  </FieldIcon>
+                  <input type={showPassword ? "text" : "password"} name="password"
+                    value={formData.password} onChange={handleChange}
+                    placeholder="Min. 6 characters"
+                    className={getInputClass("password", true)} />
+                  <TogglePasswordBtn show={showPassword} onToggle={() => setShowPassword(v => !v)} />
+                </div>
+                {errors.password && <ErrorMsg msg={errors.password} />}
+              </div>
+
+              {/* ── Confirm Password (Sign Up only) ── */}
+              {!isLoginMode && (
+                <div className="mb-5">
+                  <Label text="Confirm Password" />
+                  <div className="relative">
+                    <FieldIcon>
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                          d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                      </svg>
+                    </FieldIcon>
+                    <input type={showConfirmPassword ? "text" : "password"} name="confirmPassword"
+                      value={formData.confirmPassword} onChange={handleChange}
+                      placeholder="Re-enter your password"
+                      className={getInputClass("confirmPassword", true)} />
+                    <TogglePasswordBtn show={showConfirmPassword} onToggle={() => setShowConfirmPassword(v => !v)} />
+                  </div>
+                  {errors.confirmPassword && <ErrorMsg msg={errors.confirmPassword} />}
+                </div>
+              )}
+
+              {/* ── ADDRESS FIELDS (Sign Up only) ── */}
+              {!isLoginMode && (
+                <>
+                  {/* Divider */}
+                  <div className="flex items-center gap-3 my-5">
+                    <div className="flex-1 h-px bg-gray-100" />
+                    <span className="text-xs font-semibold tracking-wide uppercase"
+                      style={{ color: "var(--color-gray-light)" }}>
+                      Address Details (Optional)
+                    </span>
+                    <div className="flex-1 h-px bg-gray-100" />
+                  </div>
+                  {/* Full Address — full width */}
+                  <div className="mb-5">
+                    <Label text="Full Address" />
+                    <div className="relative">
+                      <FieldIcon>
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                            d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                        </svg>
+                      </FieldIcon>
+                      <input type="text" name="address" value={formData.address}
+                        onChange={handleChange} placeholder="123, Street Name, Area"
+                        className={getInputClass("address")} />
+                    </div>
+                    {errors.address && <ErrorMsg msg={errors.address} />}
+                  </div>
+
+                  {/* Country + State — 2 col on sm+ */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
+                    <div>
+                      <Label text="Country" />
+                      <div className="relative">
+                        <FieldIcon>
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                              d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                        </FieldIcon>
+                        <input type="text" name="country" value={formData.country}
+                          onChange={handleChange} placeholder="India"
+                          className={getInputClass("country")} />
+                      </div>
+                      {errors.country && <ErrorMsg msg={errors.country} />}
+                    </div>
+
+                    <div>
+                      <Label text="State" />
+                      <div className="relative">
+                        <FieldIcon>
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                              d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                              d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                          </svg>
+                        </FieldIcon>
+                        <input type="text" name="state" value={formData.state}
+                          onChange={handleChange} placeholder="Maharashtra"
+                          className={getInputClass("state")} />
+                      </div>
+                      {errors.state && <ErrorMsg msg={errors.state} />}
+                    </div>
+                  </div>
+
+                  {/* City + Postal Code — 2 col on sm+ */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
+                    <div>
+                      <Label text="City" />
+                      <div className="relative">
+                        <FieldIcon>
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                              d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                          </svg>
+                        </FieldIcon>
+                        <input type="text" name="city" value={formData.city}
+                          onChange={handleChange} placeholder="Pune"
+                          className={getInputClass("city")} />
+                      </div>
+                      {errors.city && <ErrorMsg msg={errors.city} />}
+                    </div>
+
+                    <div>
+                      <Label text="Postal Code" />
+                      <div className="relative">
+                        <FieldIcon>
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                              d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14" />
+                          </svg>
+                        </FieldIcon>
+                        <input type="text" name="postal_code" value={formData.postal_code}
+                          onChange={handleChange} placeholder="411001"
+                          className={getInputClass("postal_code")} />
+                      </div>
+                      {errors.postal_code && <ErrorMsg msg={errors.postal_code} />}
+                    </div>
+                  </div>
+
+
+                </>
+              )}
+
+              {/* ── Submit ── */}
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="w-full font-bold py-3 rounded-lg text-sm sm:text-base disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 transition-colors mt-2"
+                style={{ backgroundColor: "var(--color-primary)", color: "var(--color-secondary)" }}
+                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "var(--color-primary-light)")}
+                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "var(--color-primary)")}
+                onMouseDown={(e) => (e.currentTarget.style.backgroundColor = "var(--color-primary-dark)")}
+                onMouseUp={(e) => (e.currentTarget.style.backgroundColor = "var(--color-primary-light)")}
+              >
+                {isLoading ? (
+                  <>
+                    <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                    </svg>
+                    {isLoginMode ? "Signing In..." : "Creating Account..."}
+                  </>
+                ) : (
+                  isLoginMode ? "Sign In" : "Create Account"
+                )}
+              </button>
+
+            </form>
           )}
 
           {forgotStep === "none" && (

@@ -6,6 +6,7 @@ import store from "./redux/store";
 import AuthLoader from "./authentication/AuthLoader";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { firebaseService } from "./firebase/firebaseService";
+import { CartProvider } from "./ecommerce-pages/context/CartContext.tsx";
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -41,7 +42,9 @@ export default function App() {
     <Provider store={store}>
       <QueryClientProvider client={queryClient}>
         <AuthLoader>
-          <AppContent />
+          <CartProvider>
+            <AppContent />
+          </CartProvider>
         </AuthLoader>
       </QueryClientProvider>
     </Provider>

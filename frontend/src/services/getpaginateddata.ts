@@ -17,6 +17,7 @@ export const getAllPaginatedData = async (endpoint: string, params = {}) => {
     return results;
   } catch (error: any) {
     console.error("Error fetching all paginated data:", error);
+    // Don't modify error response, just log and re-throw
     throw error?.response?.data || error;
   }
 };

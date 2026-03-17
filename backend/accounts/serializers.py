@@ -39,4 +39,4 @@ class MeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserMaster
-        fields = ['id', 'first_name', 'last_name', 'role','role_id']
+        fields = ['id', 'first_name', 'last_name', 'role','role_id', 'user_image']

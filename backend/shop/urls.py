@@ -11,6 +11,7 @@ from .views import (
     ManagerRequestHistoryView,UpdateShopOwnerProductPriceView,ManagerFulfilledOrdersListView,ManagerOrderDetailView
 )
 from .invoice_views import (ManagerOrderInvoicePDFView,ManagerOrderInvoicePDFDownloadView,ShopOwnerOrderItemInvoicePDFDownloadView,ShopOwnerOrderItemInvoicePDFView,ManagerOrderDeliveryChallanPDFDownloadView)
+from . import ecommerce_views
 
 urlpatterns = [
     # Inventory Management
@@ -39,4 +40,9 @@ urlpatterns = [
     path('manager/orders/<int:order_id>/invoice/view/', ManagerOrderInvoicePDFView.as_view(), name='manager-invoice-view'),
     path('manager/orders/<int:order_id>/invoice/pdf/', ManagerOrderInvoicePDFDownloadView.as_view(), name='manager-invoice-download'),
     path('manager/orders/<int:order_id>/delivery-challan/pdf/', ManagerOrderDeliveryChallanPDFDownloadView.as_view(), name='manager-delivery-challan-download'),
+
+    # Ecommerce URLs
+    path("ecommerce/cart/", ecommerce_views.EcommerceCartView.as_view(), name="ecommerce-cart"),
+    path("ecommerce/checkout/", ecommerce_views.CreateEcommerceOrderView.as_view(), name="ecommerce-checkout"),
+    path("ecommerce/my-orders/", ecommerce_views.MyOrdersView.as_view(), name="ecommerce-my-orders"),
 ]

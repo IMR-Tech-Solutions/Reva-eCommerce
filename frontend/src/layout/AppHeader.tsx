@@ -236,7 +236,7 @@ const AppHeader: React.FC = () => {
             )}
           </button>
 
-          <Link to="/" className="lg:hidden">
+          <Link to="/dashboard" className="lg:hidden">
             <img
               className="h-8 dark:hidden"
               src="/inventa_logo_dark.png"

@@ -5,6 +5,7 @@ import { handleError } from "../../utils/handleError";
 import {
   updateposorderservice,
   cancelposorderservice,
+  deleteposorderservice,
 } from "../../services/posorderservices";
 import { POSOrderPayload } from "../../types/types";
 
@@ -83,12 +84,39 @@ const EditOrders = ({
     }
   };
 
+  const handleDeleteOrder = async () => {
+    if (!window.confirm("Are you sure you want to permanently delete this order? This action cannot be undone.")) {
+      return;
+    }
+    try {
+      setLoading(true);
+      await deleteposorderservice(selectedOrder.id!);
+      toast.success("Order deleted successfully");
+      fetchOrders();
+      onCancel();
+    } catch (err) {
+      console.error("Error deleting order:", err);
+      handleError(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <Modal
       title={`Edit Order`}
       open={visible}
       onCancel={onCancel}
       footer={[
+        <Button
+          key="deleteOrder"
+          danger
+          type="primary"
+          onClick={handleDeleteOrder}
+          loading={loading}
+        >
+          Delete Order
+        </Button>,
         <Button
           key="cancelOrder"
           danger
