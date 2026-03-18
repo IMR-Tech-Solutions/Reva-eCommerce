@@ -1,5 +1,5 @@
-import firebase_admin
-from firebase_admin import credentials, messaging
+# import firebase_admin
+# from firebase_admin import credentials, messaging
 from django.conf import settings
 from django.utils import timezone
 from .models import FCMToken, Notification
@@ -19,7 +19,7 @@ class FirebaseNotificationService:
                 else:
                     cred = credentials.Certificate(settings.FIREBASE_SERVICE_ACCOUNT_PATH)
                 firebase_admin.initialize_app(cred)
-            self.initialized = True
+            self.initialized = False
         except Exception as e:
             logger.error(f"Firebase initialization error: {e}")
             self.initialized = False
@@ -39,9 +39,18 @@ class FirebaseNotificationService:
         return self.send_notification_to_user(shop_owner_id, title, body, data)
 
     def send_notification_to_user(self, user_id, title, body, data=None):
-        if not self.initialized:
-            logger.error("Firebase not initialized")
-            return {'success': False, 'error': 'Firebase not initialized'}
+
+        logger.warning("Firebase disabled - skipping push notification")
+    
+        Notification.objects.create(
+            user_id=user_id,
+            title=title,
+            body=body,
+            data=data or {},
+            status='skipped'
+        )
+    
+        return {'success': False, 'error': 'Firebase disabled'}
             
         try:
             fcm_token_obj = FCMToken.objects.filter(user_id=user_id, is_active=True).first()
