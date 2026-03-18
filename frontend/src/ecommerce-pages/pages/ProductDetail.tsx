@@ -12,18 +12,11 @@ import {
   ArrowLeft, BadgeCheck, Layers, Award, ChevronLeft,
 } from "lucide-react";
 import { handleError } from "../../utils/handleError";
+import { getImageUrl } from "../../utils/getImageUrl";
 
 const formatPrice = (v: number) => `₹${v.toLocaleString("en-IN")}`;
 
-// Utility to handle backend image URLs
-const getImageUrl = (imagePath: string) => {
-  if (!imagePath) return "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&q=80"; // Fallback
-  if (imagePath.startsWith("http")) return imagePath;
 
-  const baseUrl = import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000/api/";
-  const domain = baseUrl.replace("/api/", "");
-  return `${domain}${imagePath}`;
-};
 
 // ── Standalone Related Card ──
 const RelatedCard = ({

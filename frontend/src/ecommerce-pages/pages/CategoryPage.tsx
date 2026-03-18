@@ -4,6 +4,7 @@ import { Product } from "../data/products";
 import { useCart } from "../context/CartContext";
 import { getpublicproductsbycategoryservice } from "../../services/productservices";
 import { toast } from "react-toastify";
+import { getImageUrl } from "../../utils/getImageUrl";
 import {
   SlidersHorizontal,
   Package,
@@ -59,7 +60,7 @@ const ProductCard = ({
       {/* Image */}
       <div className="w-full h-48 sm:h-52 bg-[#F5F5F5] flex items-center justify-center overflow-hidden relative">
         <img
-          src={product.image}
+          src={getImageUrl(product.image)}
           alt={product.name}
           className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-300"
         />
@@ -202,9 +203,7 @@ const CategoryPage = () => {
             flowRate: item.flow_rate,
             motorHP: item.motor_hp,
             price: Number(item.price) || 0,
-            image: item.product_image
-              ? `${import.meta.env.VITE_API_IMG_URL ?? ""}${item.product_image}`
-              : "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&q=80",
+            image: item.product_image || "",
           }));
           setAllProducts(mappedProducts);
         }

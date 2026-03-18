@@ -3,6 +3,7 @@ import { useNavigate } from "react-router";
 import { ArrowRight, ChevronDown } from "lucide-react";
 import { toast } from "react-toastify";
 import { getpubliccategoriesservice } from "../../../services/categoryservices";
+import { getImageUrl } from "../../../utils/getImageUrl";
 
 // ── Types ──
 type PromoBanner = {
@@ -319,20 +320,12 @@ const FeaturedSection = () => {
 
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-3 gap-3">
             {categories.slice(0, 6).map((cat) => {
-              const imageBaseUrl =
-                import.meta.env.VITE_API_BASE_URL?.replace("/api/", "") || "";
-
-              const getImageUrl = () => {
-                if (
-                  cat.category_image &&
-                  cat.category_image !== "/media/category_images/default.png"
-                ) {
-                  return cat.category_image.startsWith("http")
-                    ? cat.category_image
-                    : `${imageBaseUrl}${cat.category_image}`;
-                }
-                return categoryImages[cat.slug] ?? "/ecommerce-images/cat1.jpg";
-              };
+              const imgSrc = getImageUrl(
+                cat.category_image && cat.category_image !== "/media/category_images/default.png"
+                  ? cat.category_image
+                  : "",
+                categoryImages[cat.slug] ?? "/ecommerce-images/cat1.jpg"
+              );
 
               return (
                 <div
@@ -342,7 +335,7 @@ const FeaturedSection = () => {
                 >
                   <div className="w-24 h-24 md:w-42 md:h-42 flex items-center justify-center">
                     <img
-                      src={getImageUrl()}
+                      src={imgSrc}
                       alt={cat.category_name}
                       className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-300 drop-shadow-sm"
                     />

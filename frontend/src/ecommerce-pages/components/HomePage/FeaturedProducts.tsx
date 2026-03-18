@@ -3,16 +3,9 @@ import { ChevronLeft, ChevronRight, ShoppingCart, Star, Heart } from "lucide-rea
 import { getpublicproductsservice } from "../../../services/productservices";
 import { ProductData } from "../../../types/types";
 import { handleError } from "../../../utils/handleError";
+import { getImageUrl } from "../../../utils/getImageUrl";
 
-// Utility to handle backend image URLs
-const getImageUrl = (imagePath: string) => {
-  if (!imagePath) return "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&q=80";
-  if (imagePath.startsWith("http")) return imagePath;
 
-  const baseUrl = import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000/api/";
-  const domain = baseUrl.replace("/api/", "");
-  return `${domain}${imagePath}`;
-};
 
 // ── Responsive Hook ──
 const useVisibleCount = (): number => {

@@ -4,6 +4,7 @@ import { Product } from "../data/products";
 import { useCart } from "../context/CartContext";
 import { toast } from "react-toastify";
 import { getpublicproductsservice } from "../../services/productservices";
+import { getImageUrl } from "../../utils/getImageUrl";
 import {
   ChevronDown,
   ChevronUp,
@@ -144,7 +145,8 @@ const ProductCard = ({
       {/* Image */}
       <div className="w-full h-52 bg-[#F5F5F5] flex items-center justify-center overflow-hidden relative">
         <img
-          src={product.image}
+          
+          src={getImageUrl(product.image)}
           alt={product.name}
           className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
         />
@@ -292,9 +294,7 @@ const EcommerceShop = () => {
             flowRate: item.flow_rate,
             motorHP: item.motor_hp,
             price: Number(item.price) || 0,
-            image: item.product_image
-              ? `${import.meta.env.VITE_API_IMG_URL ?? ""}${item.product_image}`
-              : "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&q=80", // fallback
+            image: item.product_image || "",
           }));
           setAllProducts(mappedProducts);
           if (mappedProducts.length > 0) {

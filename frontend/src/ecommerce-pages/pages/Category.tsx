@@ -2,6 +2,7 @@ import { useNavigate } from "react-router";
 import { useState, useEffect } from "react";
 import { getpubliccategoriesservice } from "../../services/categoryservices";
 import { ArrowRight } from "lucide-react";
+import { getImageUrl } from "../../utils/getImageUrl";
 
 // ── Category images + descriptions ──
 const CATEGORY_META: Record<string, { image: string; description: string; count: number }> = {
@@ -84,19 +85,15 @@ const CategoriesPage = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {categories.map((cat) => {
               const meta = CATEGORY_META[cat.slug];
-              const imageBaseUrl = import.meta.env.VITE_API_BASE_URL?.replace('/api/', '') || "";
-
-              const getImageUrl = () => {
-                if (cat.category_image && cat.category_image !== "/media/category_images/default.png") {
-                  return cat.category_image.startsWith("http")
-                    ? cat.category_image
-                    : `${imageBaseUrl}${cat.category_image}`;
-                }
-                return meta?.image || "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=600&q=80";
-              };
+              const imgSrc = getImageUrl(
+                cat.category_image && cat.category_image !== "/media/category_images/default.png"
+                  ? cat.category_image
+                  : "",
+                meta?.image || "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=600&q=80"
+              );
 
               const currentMeta = {
-                image: getImageUrl(),
+                image: imgSrc,
                 description: cat.description || meta?.description || "Browse our premium industrial equipment range.",
                 count: cat.product_count || meta?.count || 0
               };

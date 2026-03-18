@@ -162,5 +162,5 @@ class PublicCategoriesView(APIView):
     permission_classes = [AllowAny]
     def get(self, request):
         categories = Category.objects.all().order_by('category_name')
-        serializer = CategorySerializer(categories, many=True)
+        serializer = CategorySerializer(categories, many=True, context={'request': request})
         return Response(serializer.data)
