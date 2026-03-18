@@ -74,8 +74,8 @@ SIMPLE_JWT = {
 # ============================================================
 # FIREBASE
 # ============================================================
-FIREBASE_SERVICE_ACCOUNT_PATH = os.path.join(BASE_DIR, "firebase-service-account.json")
-FIREBASE_SERVICE_ACCOUNT_JSON = config("FIREBASE_SERVICE_ACCOUNT_JSON", default=None)
+# FIREBASE_SERVICE_ACCOUNT_PATH = os.path.join(BASE_DIR, "firebase-service-account.json")
+# FIREBASE_SERVICE_ACCOUNT_JSON = config("FIREBASE_SERVICE_ACCOUNT_JSON", default=None)
 
 # ============================================================
 # MIDDLEWARE
