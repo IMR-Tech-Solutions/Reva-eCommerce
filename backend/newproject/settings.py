@@ -58,7 +58,7 @@ INSTALLED_APPS = [
     "summary",
     "reports",
     "broker",
-    # "notifications",
+    "notifications",
 ]
 
 CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
