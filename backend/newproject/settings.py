@@ -22,6 +22,14 @@ CORS_ALLOWED_ORIGINS = config(
     cast=Csv(),
 )
 CORS_ALLOW_CREDENTIALS = True
+CSRF_TRUSTED_ORIGINS = [
+
+    "https://reva.imrtechsolutions.com",
+
+]
+ 
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+ 
 
 # ============================================================
 # APPLICATION DEFINITION

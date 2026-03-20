@@ -39,7 +39,7 @@ export default function UserDropdown() {
     removeTokens();
     queryClient.clear();
     dispatch(clearUser());
-    navigate("/signin");
+    navigate("/admin/login");
   };
 
   return (
