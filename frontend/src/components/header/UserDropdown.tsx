@@ -3,7 +3,7 @@ import { DropdownItem } from "../ui/dropdown/DropdownItem";
 import { Dropdown } from "../ui/dropdown/Dropdown";
 import { getUserDetails } from "../../services/userdetailsservice";
 import { useDispatch } from "react-redux";
-import { removeTokens } from "../../authentication/auth";
+import { removeTokens, removeAdminTokens } from "../../authentication/auth";
 import { clearUser } from "../../redux/userSlice";
 import { useNavigate } from "react-router";
 import { queryClient } from "../../App";
@@ -36,10 +36,22 @@ export default function UserDropdown() {
   }
 
   const signout = () => {
-    removeTokens();
-    queryClient.clear();
-    dispatch(clearUser());
-    navigate("/signin");
+    // Determine role from fetched user data
+    const isAdmin = Number(userData?.role_id) === 1 || userData?.role?.toLowerCase() === "admin";
+    
+    if (isAdmin) {
+      // Admin logout — clear admin cookies, redirect to admin signup
+      removeAdminTokens();
+      queryClient.clear();
+      dispatch(clearUser());
+      navigate("/admin/signup");
+    } else {
+      // Vendor/Manager logout — clear regular cookies, redirect to ecommerce home
+      removeTokens();
+      queryClient.clear();
+      dispatch(clearUser());
+      navigate("/");
+    }
   };
 
   return (

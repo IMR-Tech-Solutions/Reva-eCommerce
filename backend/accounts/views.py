@@ -124,7 +124,7 @@ class CustomTokenObtainPairView(TokenObtainPairView):
 
 #GET ALL USERS DATA --admin only
 class AllUsersView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsAdminRole]
     def get(self, request):
         users = UserMaster.objects.all().order_by('id')
         paginator = PageNumberPagination()

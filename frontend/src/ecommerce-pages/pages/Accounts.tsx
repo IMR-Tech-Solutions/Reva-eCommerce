@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useSearchParams } from "react-router";
 import { loginService, registerService, vendorRegisterService } from "../../services/authservices";
 import { requestPasswordResetService, confirmPasswordResetService } from "../../services/resetpasswordservices";
-import { setEcommerceTokens, removeEcommerceTokens } from "../../authentication/auth";
+import { setEcommerceTokens, removeEcommerceTokens, setTokens } from "../../authentication/auth";
 import api from "../../services/baseapi";
 import { toast } from "react-toastify";
 
@@ -109,15 +109,29 @@ function Accounts() {
         });
         setEcommerceTokens({ access: data.access, refresh: data.refresh });
 
-        // Enforce Customer role (Block Admin Role ID 1)
+        // Enforce role-based access and redirection
         try {
           const userRes = await api.get("me/");
-          if (Number(userRes.data.role_id) === 1) {
+          const isVendor = userRes.data.role === "vendor";
+          const isAdmin = Number(userRes.data.role_id) === 1 || userRes.data.role === "admin";
+
+          if (isAdmin) {
             removeEcommerceTokens();
             setIsLoading(false);
             setErrors({ email: "Admins must login via the administrative dashboard." });
             return;
           }
+
+          if (isVendor) {
+            // Vendors need both tokens to access the dashboard
+            setTokens({ access: data.access, refresh: data.refresh });
+            toast.success("Vendor login successful. Redirecting to dashboard...");
+            setTimeout(() => {
+              window.location.href = "/dashboard";
+            }, 2000);
+            return;
+          }
+
           toast.success("Login successful");
           setTimeout(() => {
             window.location.href = redirectPath;

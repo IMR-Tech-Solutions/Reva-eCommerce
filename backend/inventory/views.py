@@ -125,7 +125,8 @@ class AllUserActiveStockView(APIView):
 
 #Particular Product Stock Batches
 class ProductStockBatchesAPIView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, HasModuleAccess]
+    required_permission = "view-stock-batch"
     def get(self, request, product_id):
         product = get_object_or_404(Product,pk=product_id, is_active=True)
         batch_status = request.query_params.get('status', None)

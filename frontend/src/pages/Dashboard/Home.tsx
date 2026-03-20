@@ -4,8 +4,42 @@ import StatisticsChart from "../../components/ecommerce/StatisticsChart";
 import MonthlyTarget from "../../components/ecommerce/MonthlyTarget";
 import PageMeta from "../../components/common/PageMeta";
 import EnableNotificationsButton from "../../firebase/enableNotification";
+import { useSelector } from "react-redux";
+import AllmetricData from "../../Admin/Components/AllmetricData";
+import Allusers from "../../Admin/Users/Allusers";
 
 export default function Home() {
+  const user = useSelector((state: any) => state.user?.user);
+  const permissions = useSelector((state: any) => state.user?.permissions);
+  
+  const isAdmin = Number(user?.role_id) === 1 || user?.role?.toLowerCase() === "admin";
+
+  const hasPermission = (module: string) => {
+    if (permissions === null || !permissions) return false;
+    return permissions === "all" || permissions.includes(module);
+  };
+
+  if (isAdmin) {
+    return (
+      <>
+        <PageMeta
+          title="Inventa | Admin Panel"
+          description="Manage all inventa users, customers, orders"
+        />
+        <div className="space-y-6">
+          <AllmetricData />
+          <Allusers />
+        </div>
+      </>
+    );
+  }
+
+  // Determine visibility for vendor dashboard widgets
+  const showMetrics = hasPermission("orders") || hasPermission("customers") || hasPermission("products");
+  const showSalesChart = hasPermission("salesreport");
+  const showMonthlyTarget = hasPermission("salesreport");
+  const showStatistics = hasPermission("salesreport") || hasPermission("inventoryreport");
+
   return (
     <>
       <PageMeta
@@ -51,28 +85,41 @@ export default function Home() {
         </div>
       )}
 
+      {/* Conditionally Render Vendor Widgets */}
       <div className="grid grid-cols-12 gap-4 md:gap-6">
-        <div className="col-span-12 space-y-6 xl:col-span-7">
-          <EcommerceMetrics />
-          <MonthlySalesChart />
-        </div>
+        
+        {/* Left Column - Metrics & Sales Chart */}
+        {(showMetrics || showSalesChart) && (
+          <div className="col-span-12 space-y-6 xl:col-span-7">
+            {showMetrics && <EcommerceMetrics />}
+            {showSalesChart && <MonthlySalesChart />}
+          </div>
+        )}
 
-        <div className="col-span-12 xl:col-span-5">
-          <MonthlyTarget />
-        </div>
+        {/* Right Column - Monthly Target */}
+        {showMonthlyTarget && (
+          <div className="col-span-12 xl:col-span-5">
+            <MonthlyTarget />
+          </div>
+        )}
 
-        <div className="col-span-12">
-          <StatisticsChart />
-        </div>
+        {/* Bottom Full-Width Chart - Statistics */}
+        {showStatistics && (
+          <div className="col-span-12">
+            <StatisticsChart />
+          </div>
+        )}
 
-        <div className="col-span-12 xl:col-span-5">
-          {/* <DemographicCard /> */}
-        </div>
-
-        <div className="col-span-12 xl:col-span-7">
-          {/* <RecentOrders /> */}
-        </div>
       </div>
+
+      {(!showMetrics && !showSalesChart && !showMonthlyTarget && !showStatistics) && (
+        <div className="flex items-center justify-center p-12 bg-gray-50 dark:bg-gray-800/50 rounded-2xl border border-gray-200 dark:border-gray-700">
+          <p className="text-gray-500 dark:text-gray-400 text-center">
+            You do not have permission to view any dashboard metrics. Please contact your administrator.
+          </p>
+        </div>
+      )}
+
     </>
   );
 }

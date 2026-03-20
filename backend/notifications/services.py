@@ -1,5 +1,5 @@
-# import firebase_admin
-# from firebase_admin import credentials, messaging
+import firebase_admin
+from firebase_admin import credentials, messaging
 from django.conf import settings
 from django.utils import timezone
 from .models import FCMToken, Notification

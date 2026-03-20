@@ -34,3 +34,8 @@ export const isEcommerceRoute = (pathname: string): boolean => {
   
   return false;
 };
+
+// Helper function to check if a route belongs to the admin side
+export const isAdminRoute = (pathname: string): boolean => {
+  return pathname.startsWith("/admin");
+};
