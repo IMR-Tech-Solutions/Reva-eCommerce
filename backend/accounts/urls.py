@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import AdminRegisterView, AddUserView, CustomTokenObtainPairView, MeView,UpdateUserView,AllUsersView,SingleUserData, DeleteUserView, UpdateMyProfileView,UserProfileView, RequestPasswordResetView, ResetPasswordView, CustomerRegisterView, VendorRegisterView
+from .views import AdminRegisterView, AddUserView, CustomTokenObtainPairView, MeView,UpdateUserView,AllUsersView,SingleUserData, DeleteUserView, UpdateMyProfileView,UserProfileView, RequestPasswordResetView, ResetPasswordView, CustomerRegisterView
 from rest_framework_simplejwt.views import TokenRefreshView
 
 urlpatterns = [
@@ -22,5 +22,4 @@ urlpatterns = [
     path('password-reset/request/', RequestPasswordResetView.as_view(), name='request_password_reset'),
     path('password-reset/confirm/', ResetPasswordView.as_view(), name='reset_password'),
     path('register/', CustomerRegisterView.as_view(), name='customer-register'),
-    path('vendor/register/', VendorRegisterView.as_view(), name='vendor-register'),
 ]

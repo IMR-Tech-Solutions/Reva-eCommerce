@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useSearchParams } from "react-router";
-import { loginService, registerService, vendorRegisterService } from "../../services/authservices";
+import { loginService, registerService } from "../../services/authservices";
 import { requestPasswordResetService, confirmPasswordResetService } from "../../services/resetpasswordservices";
-import { setEcommerceTokens, removeEcommerceTokens, setTokens } from "../../authentication/auth";
+import { setEcommerceTokens, removeEcommerceTokens } from "../../authentication/auth";
 import api from "../../services/baseapi";
 import { toast } from "react-toastify";
 
@@ -35,8 +35,6 @@ interface FormErrors {
 function Accounts() {
   const [searchParams] = useSearchParams();
   const redirectPath = searchParams.get("redirect") || "/";
-  const role = searchParams.get("role");
-  const isVendorRole = role === "vendor";
   const [isLoginMode, setIsLoginMode] = useState<boolean>(true);
   const [formData, setFormData] = useState<FormData>({
     name: "",
@@ -109,29 +107,15 @@ function Accounts() {
         });
         setEcommerceTokens({ access: data.access, refresh: data.refresh });
 
-        // Enforce role-based access and redirection
+        // Enforce Customer role (Block Admin Role ID 1)
         try {
           const userRes = await api.get("me/");
-          const isVendor = userRes.data.role === "vendor";
-          const isAdmin = Number(userRes.data.role_id) === 1 || userRes.data.role === "admin";
-
-          if (isAdmin) {
+          if (Number(userRes.data.role_id) === 1) {
             removeEcommerceTokens();
             setIsLoading(false);
             setErrors({ email: "Admins must login via the administrative dashboard." });
             return;
           }
-
-          if (isVendor) {
-            // Vendors need both tokens to access the dashboard
-            setTokens({ access: data.access, refresh: data.refresh });
-            toast.success("Vendor login successful. Redirecting to dashboard...");
-            setTimeout(() => {
-              window.location.href = "/dashboard";
-            }, 2000);
-            return;
-          }
-
           toast.success("Login successful");
           setTimeout(() => {
             window.location.href = redirectPath;
@@ -148,7 +132,7 @@ function Accounts() {
         const first_name = names[0];
         const last_name = names.length > 1 ? names.slice(1).join(" ") : "";
 
-        const registrationData = {
+        await registerService({
           email: formData.email,
           password: formData.password,
           first_name,
@@ -159,15 +143,9 @@ function Accounts() {
           city: formData.city,
           postal_code: formData.postal_code,
           address: formData.address,
-        };
+        });
 
-        if (isVendorRole) {
-          await vendorRegisterService(registrationData);
-          toast.success("Vendor account created successfully. Please login.");
-        } else {
-          await registerService(registrationData);
-          toast.success("Account created successfully. Please login.");
-        }
+        toast.success("Account created successfully. Please login.");
         // Page refresh as requested, will default back to login mode
         setTimeout(() => {
           window.location.reload();
@@ -333,10 +311,10 @@ function Accounts() {
             </svg>
           </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold" style={{ color: "var(--color-secondary)" }}>
-            {forgotStep !== "none" ? "Reset your password" : isLoginMode ? "Sign in to your account" : isVendorRole ? "Create Seller Account" : "Create Account"}
+            {forgotStep !== "none" ? "Reset your password" : isLoginMode ? "Sign in to your account" : "Create Account"}
           </h1>
           <p className="text-sm mt-1" style={{ color: "var(--color-gray)" }}>
-            {forgotStep !== "none" ? "Follow the steps to regain access" : isLoginMode ? "Enter your credentials to continue" : isVendorRole ? "Join as a seller and grow your business" : "Join and start shopping today"}
+            {forgotStep !== "none" ? "Follow the steps to regain access" : isLoginMode ? "Enter your credentials to continue" : "Join and start shopping today"}
           </p>
         </div>
 
@@ -654,10 +632,10 @@ function Accounts() {
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                     </svg>
-                    {isLoginMode ? "Signing In..." : isVendorRole ? "Creating Seller Account..." : "Creating Account..."}
+                    {isLoginMode ? "Signing In..." : "Creating Account..."}
                   </>
                 ) : (
-                  isLoginMode ? "Sign In" : isVendorRole ? "Create Seller Account" : "Create Account"
+                  isLoginMode ? "Sign In" : "Create Account"
                 )}
               </button>
 

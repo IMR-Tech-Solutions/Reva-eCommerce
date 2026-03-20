@@ -8,7 +8,7 @@ import api from "../../services/baseapi";
 import { useNavigate } from "react-router";
 import { useDispatch } from "react-redux";
 import { setUser, setPermissions } from "../../redux/userSlice";
-import { setTokens, setAdminTokens, removeTokens } from "../../authentication/auth";
+import { setTokens, removeTokens } from "../../authentication/auth";
 import ButtonLoading from "../common/ButtonLoading";
 import { handleError } from "../../utils/handleError";
 import { getusermoduleservice } from "../../services/gettingmoduleservice";
@@ -49,34 +49,28 @@ export default function SignInForm() {
       });
       const { access, refresh } = response.data;
       if (access && refresh) {
-        // Temporarily set as regular tokens so the /me/ call works
         setTokens({ access, refresh });
         const userData = await api.get("me/");
-        
-        // Determine if user is admin
-        const isAdminProfile = Number(userData.data.role_id) === 1 || userData.data.role?.toLowerCase() === 'admin';
+        dispatch(setUser(userData.data));
 
-        if (!isAdminProfile) {
-          // BLOCK VENDORS from logging in here
+        // Enforce Admin/Staff role
+        const isAdmin = Number(userData.data.role_id) === 1 || userData.data.user_type_name === 'admin';
+        
+        if (!isAdmin) {
           removeTokens();
-          toast.error("Vendors/Managers cannot login from this administrative portal.");
           setLoading(false);
+          toast.error("Customers must login via the main website.");
           return;
         }
 
-        // It's an admin - set tokens and redirect to /dashboard
-        dispatch(setUser(userData.data));
-        setAdminTokens({ access, refresh });
-        removeTokens();
-        
         const perms = await getusermoduleservice(userData.data.role_id);
         dispatch(setPermissions(perms));
-        
-        toast.success("Admin login successful !");
         navigate("/dashboard");
+        toast.success("Login successful !");
       }
     } catch (error: any) {
       console.error("Error Occurred:", error);
+      console.log(error.response.data);
       handleError(error);
     } finally {
       setLoading(false);
@@ -89,10 +83,10 @@ export default function SignInForm() {
         <div>
           <div className="mb-2">
             <h1 className="mb-2 font-semibold text-gray-800 text-title-sm dark:text-white/90 sm:text-title-md">
-              Administrative Sign In
+              Sign In
             </h1>
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              Enter your admin credentials to access the system dashboard.
+              Enter your email and password to sign in!
             </p>
           </div>
           <div>
@@ -109,7 +103,7 @@ export default function SignInForm() {
                     Email <span className="text-error-500">*</span>{" "}
                   </Label>
                   <Input
-                    placeholder="admin@gmail.com"
+                    placeholder="info@gmail.com"
                     name="email"
                     id="email"
                     value={signinData.email}
@@ -159,10 +153,16 @@ export default function SignInForm() {
               </div>
             </form>
 
-            <div className="mt-5 text-center">
-               <p className="text-sm text-gray-400">
-                  This portal is for system administrators only.
-               </p>
+            <div className="mt-5">
+              <p className="text-sm font-normal text-center text-gray-700 dark:text-gray-400 sm:text-start">
+                Don&apos;t have an account? {""}
+                <Link
+                  to={all_routes.signUp}
+                  className="text-brand-500 hover:text-brand-600 dark:text-brand-400"
+                >
+                  Sign Up
+                </Link>
+              </p>
             </div>
           </div>
         </div>

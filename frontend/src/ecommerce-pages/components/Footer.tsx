@@ -19,8 +19,8 @@ const Footer = () => {
 
   const accountLinks = [
     { label: "My account", href: ecommerceLinks.Account },
+
     { label: "My Orders", href: ecommerceLinks.AccountOrder },
-    { label: "Become a Seller", href: "/account?role=vendor" },
     { label: "Returns", href: "/returns" },
     { label: "Shipping", href: ecommerceLinks.Shipping },
   ];

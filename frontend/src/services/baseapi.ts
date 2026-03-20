@@ -5,16 +5,12 @@ import {
   getRefreshToken,
   setAccessToken,
   removeTokens,
-  getAdminToken,
-  getAdminRefreshToken,
-  setAdminAccessToken,
-  removeAdminTokens,
   getEcommerceToken,
   getEcommerceRefreshToken,
   setEcommerceAccessToken,
   removeEcommerceTokens,
 } from "../authentication/auth";
-import { isEcommerceRoute, isAdminRoute } from "../ecommerce-pages/ecommerceRoutes";
+import { isEcommerceRoute } from "../ecommerce-pages/ecommerceRoutes";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -26,22 +22,12 @@ const api = axios.create({
 // Attach access token to every request
 api.interceptors.request.use(
   (config) => {
+    // Determine active route
     const currentPath = window.location.pathname;
+    const isEcommerce = isEcommerceRoute(currentPath);
 
-    let token: string | undefined;
-    if (isEcommerceRoute(currentPath)) {
-      token = getEcommerceToken();
-    } else if (isAdminRoute(currentPath) || (currentPath === "/dashboard" && getAdminToken())) {
-      // Prioritize admin token for explicitly admin routes or shared dashboard as admin
-      token = getAdminToken();
-    } else {
-      token = getToken();
-    }
-
-    // Fallback if specific token missing (useful during transitions like login)
-    if (!token) {
-      token = getToken() || getAdminToken() || getEcommerceToken();
-    }
+    // Select the appropriate token
+    const token = isEcommerce ? getEcommerceToken() : getToken();
 
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -67,21 +53,10 @@ api.interceptors.response.use(
       try {
         const currentPath = window.location.pathname;
         const isEcommerce = isEcommerceRoute(currentPath);
-        const isAdmin = isAdminRoute(currentPath) || (currentPath === "/dashboard" && getAdminToken());
 
-        let refresh: string | undefined;
-        if (isEcommerce) {
-          refresh = getEcommerceRefreshToken();
-        } else if (isAdmin) {
-          refresh = getAdminRefreshToken();
-        } else {
-          refresh = getRefreshToken();
-        }
-        
-        // Fallback for refresh token
-        if (!refresh) {
-          refresh = getRefreshToken() || getAdminRefreshToken() || getEcommerceRefreshToken();
-        }
+        const refresh = isEcommerce
+          ? getEcommerceRefreshToken()
+          : getRefreshToken();
 
         if (!refresh) throw new Error("Missing refresh token");
         const res = await axios.post(`${BASE_URL}token/refresh/`, {
@@ -89,11 +64,8 @@ api.interceptors.response.use(
         });
         const newAccess = res.data.access;
 
-        // Store new access token in the correct context
-        if (isEcommerce && getEcommerceRefreshToken()) {
+        if (isEcommerce) {
           setEcommerceAccessToken(newAccess);
-        } else if (isAdmin && getAdminRefreshToken()) {
-          setAdminAccessToken(newAccess);
         } else {
           setAccessToken(newAccess);
         }
@@ -106,8 +78,6 @@ api.interceptors.response.use(
         const currentPath = window.location.pathname;
         if (isEcommerceRoute(currentPath)) {
           removeEcommerceTokens();
-        } else if (isAdminRoute(currentPath) || (currentPath === "/dashboard" && getAdminToken())) {
-          removeAdminTokens();
         } else {
           removeTokens();
         }

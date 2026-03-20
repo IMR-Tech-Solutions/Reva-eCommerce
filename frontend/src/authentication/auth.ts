@@ -23,31 +23,6 @@ export const removeTokens = () => {
   Cookies.remove("refresh");
 };
 
-// --- ADMIN SPECIFIC TOKENS ---
-
-export const setAdminTokens = ({
-  access,
-  refresh,
-}: {
-  access: string;
-  refresh: string;
-}) => {
-  Cookies.set("admin_access", access, { expires: 1 });
-  Cookies.set("admin_refresh", refresh, { expires: 1 });
-};
-
-export const setAdminAccessToken = (access: string) => {
-  Cookies.set("admin_access", access, { expires: 1 });
-};
-
-export const getAdminToken = () => Cookies.get("admin_access");
-export const getAdminRefreshToken = () => Cookies.get("admin_refresh");
-
-export const removeAdminTokens = () => {
-  Cookies.remove("admin_access");
-  Cookies.remove("admin_refresh");
-};
-
 // --- ECOMMERCE SPECIFIC TOKENS ---
 
 export const setEcommerceTokens = ({

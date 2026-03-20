@@ -124,7 +124,7 @@ class CustomTokenObtainPairView(TokenObtainPairView):
 
 #GET ALL USERS DATA --admin only
 class AllUsersView(APIView):
-    permission_classes = [IsAuthenticated, IsAdminRole]
+    permission_classes = [IsAuthenticated]
     def get(self, request):
         users = UserMaster.objects.all().order_by('id')
         paginator = PageNumberPagination()
@@ -366,40 +366,6 @@ class CustomerRegisterView(APIView):
 
                 return Response({
                     "message": "Account created successfully.",
-                    "user": user_serializer.data
-                }, status=status.HTTP_201_CREATED)
-
-        except Exception as e:
-            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-class VendorRegisterView(APIView):
-    def post(self, request):
-        data = request.data.copy()
-        required_fields = ['email', 'password', 'first_name', 'last_name', 'mobile_number']
-        for field in required_fields:
-            if field not in data:
-                return Response({"error": f"{field} is required."}, status=status.HTTP_400_BAD_REQUEST)
-
-        try:
-            with transaction.atomic():
-                # Step 1: Get or create the "vendor" role
-                role, created = RoleMaster.objects.get_or_create(
-                    role_name='vendor',
-                    defaults={'role_name': 'vendor'}
-                )
-
-                # Step 2: Assign role ID to user_type
-                data['user_type'] = role.pk
-
-                # Step 3: Create User
-                user_serializer = UserMasterSerializer(data=data)
-                if not user_serializer.is_valid():
-                    return Response(user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-                user = user_serializer.save()
-
-                return Response({
-                    "message": "Vendor account created successfully.",
                     "user": user_serializer.data
                 }, status=status.HTTP_201_CREATED)
 

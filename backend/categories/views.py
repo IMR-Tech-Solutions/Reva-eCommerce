@@ -87,8 +87,7 @@ class DeleteCategoryView(APIView):
 
 #GET PRODUCTS BASED ON CATEGORY
 class ProductsInCategory(APIView):
-    permission_classes = [IsAuthenticated, HasModuleAccess]
-    required_permission = "view-categories"
+    permission_classes = [IsAuthenticated]
     def get(self, request, category_id):
         category = get_object_or_404(Category, pk=category_id)
         # self.check_object_permissions(request, category)
@@ -103,8 +102,7 @@ class ProductsInCategory(APIView):
         return paginator.get_paginated_response(serializer.data)
     
 class UserStockedCategoriesView(APIView):
-    permission_classes = [IsAuthenticated, HasModuleAccess]
-    required_permission = "view-categories"
+    permission_classes = [IsAuthenticated]
     def get(self, request):
         user = request.user
         categories = Category.objects.filter(

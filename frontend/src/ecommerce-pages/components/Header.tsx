@@ -393,12 +393,6 @@ export default function Header() {
                   {label}
                 </a>
               ))}
-              <a
-                href="/account?role=vendor"
-                className="ml-2 px-4 py-2 text-sm font-black uppercase tracking-wider text-white bg-[#1C1C1E] hover:bg-white hover:text-[#1C1C1E] rounded-md transition-all duration-300 shadow-sm"
-              >
-                Become a Seller
-              </a>
             </nav>
 
             {/* Right icons */}
@@ -517,14 +511,6 @@ export default function Header() {
               </button>
             </div>
           </div>
-
-          {/* Become a Seller button in sticky bar */}
-          <a
-            href="/account?role=vendor"
-            className="hidden lg:flex items-center gap-2 px-4 py-2 text-sm font-black uppercase tracking-wider text-[#1C1C1E] bg-white hover:bg-[#1C1C1E] hover:text-white border-2 border-[#1C1C1E] rounded-md transition-all duration-300 mx-2"
-          >
-            Become a Seller
-          </a>
 
           {/* Account + Cart */}
           <div className="flex items-center gap-1 flex-shrink-0 ml-auto">
@@ -765,13 +751,6 @@ export default function Header() {
                 {label}
               </a>
             ))}
-            <a
-              href="/account?role=vendor"
-              className="flex items-center gap-3 px-3 py-4 mt-2 rounded-lg text-sm font-black uppercase tracking-wider text-[#1C1C1E] bg-[#FFB700] hover:bg-[#FFC933] transition-all group shadow-lg"
-              onClick={() => setMenuOpen(false)}
-            >
-              Become a Seller
-            </a>
           </div>
         </div>
 
